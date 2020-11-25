@@ -1,5 +1,6 @@
 # VFO
-VFO Python Service for Voice Analyzation[br]
+VFO Python Service for Voice Analyzation
+
 HealthDrop Edition
 
 ''' healthdrop_init_audio.py data_store_path '''
