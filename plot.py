@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from matplotlib import pyplot as plt
 
 from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
@@ -46,17 +47,43 @@ def plot_phasor(wav_file, results, output_dir):
     # Plot states
     plt.figure()
     plt.subplot(121)
-    plt.plot(Sr[:, 0], Sr[:, 1], 'b.-')
+    plt.plot(Sr[:, 0], Sr[:, 1], 'w.-')
     plt.xlabel(r'$\xi_r$')
     plt.ylabel(r'$\dot{\xi}_r$')
+
+   #Plot hide it all
+    ax = plt.gca()
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    ax.axes.xaxis.set_ticks([])
+    ax.axes.yaxis.set_ticks([])
+    ax.axes.xaxis.set_ticklabels([])
+    ax.axes.yaxis.set_ticklabels([])
+    ax.set_facecolor('none')
+    plt.grid(False)
+
     plt.subplot(122)
-    plt.plot(Sl[:, 0], Sl[:, 1], 'b.-')
-    plt.xlabel(r'$\xi_l$')
-    plt.ylabel(r'$\dot{\xi}_l$')
-    plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
+    #plt.xlabel(r'$\xi_l$')
+    #plt.ylabel(r'$\dot{\xi}_l$')
+    #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
+
+   #Plot hide it all
+    ax = plt.gca()
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    ax.axes.xaxis.set_ticks([])
+    ax.axes.yaxis.set_ticks([])
+    ax.axes.xaxis.set_ticklabels([])
+    ax.axes.yaxis.set_ticklabels([])
+    ax.set_facecolor('none')
+    plt.grid(False)
+
     plt.tight_layout()
-    # plt.show()
-    plt.savefig(output_dir + '/' + wav_file.replace('/', '_') + ".png")
+
+    #CISCO 
+    plt.savefig(os.path.splitext(wav_file)[0] + "-plot.png", bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
+
     plt.clf()
     plt.cla()
     plt.close()

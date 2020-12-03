@@ -11,7 +11,8 @@ from solvers.ode_solvers.ode_solver import ode_solver
 from solvers.optimization import optim_adapt_step, optim_grad_step
 from math import floor, ceil
 
-def vocal_fold_estimator(wav_file_path, glottal_flow, logger, t_patience = 100, section = 1):
+#CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 100, section = 1):
+def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, logger, t_patience = 100, section = 1):
     """
     Inputs: wav_file_path: Path to read from actual wavfile
             glottal_flow: numpy array of glottal flow from IAIF
@@ -28,9 +29,13 @@ def vocal_fold_estimator(wav_file_path, glottal_flow, logger, t_patience = 100, 
     c = 5000  # air particle velocity, cm/s
     eta = 1.0  # nonlinear factor for energy dissipation at large amplitude
 
+    """CISCO
     sample_rate, wav_samples = wavfile.read(wav_file_path)
     if section == 1:
         wav_samples = wav_samples[floor(len(wav_samples)/2): ceil(len(wav_samples)/2 + sample_rate)]
+    """
+    
+
 
     # NOTE: If you want to plot glottal flow and original waveform together
     # fig = plt.figure()

@@ -11,9 +11,10 @@ from math import floor, ceil
 
 from external.pypevoc.speech.glottal import iaif_ola
 
-def glottal_flow_extractor(wav_file, save_dir, section = 1):
+#CISCO def glottal_flow_extractor(wav_file, save_dir, section = 1):
+def glottal_flow_extractor(wav_file_path,wav, sample_rate, section = 1):
     # Read wav
-    sample_rate, wav = wavfile.read(wav_file)
+    ### sample_rate, wav = wavfile.read(wav_file)
 
     if section == 1:
         wav = wav[floor(len(wav)/2): ceil(len(wav)/2 + sample_rate)]
@@ -39,5 +40,6 @@ def glottal_flow_extractor(wav_file, save_dir, section = 1):
     # plt.show()
 
     # Save
-    np.save(save_dir + "/" + wav_file.replace('/', '_') + ".npy", g)
+    #CISCO  np.save(save_dir + "/" + wav_file.replace('/', '_')  + ".npy", g)
+    np.save(os.path.splitext(os.path.basename(wav_file_path))[0] + ".npy", g)
     return g
