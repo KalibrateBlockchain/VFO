@@ -62,6 +62,7 @@ def plot_phasor(wav_file, results, output_dir):
     ax.set_facecolor('none')
     plt.grid(False)
 
+
     plt.subplot(122)
     plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
     #plt.xlabel(r'$\xi_l$')
