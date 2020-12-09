@@ -58,14 +58,14 @@ def run_export_analysis(args):
     # in folder created SampleX.WAV the standard WAV files
     # Create SampleX.analysis.png the COVID pic
 
-    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.test_id+os.path.sep
-    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + ".WAV")
+    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep
+    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
     #len(wav_samples)-window_size
     if args.verbose_mode ==1:
         print('Running analysis')
     #wav_chunk = wav_sample[0:800]
     wav_chunk = wav_sample
-    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + ".WAV",wav_chunk, sampling_rate)
+    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV",wav_chunk, sampling_rate)
 
     # in folder created SampleX.npy the results of the analysis
     output_filename = os.path.splitext(args.audio_file)[0] + ".npy"
@@ -75,9 +75,9 @@ def run_spectrogram_generator(args):
     # User Have a Folder in the data_dir/UID/TestID/
     # in folder created SampleX.WAV the standard WAV files
     # Created SampleX.png the spectrogram of the WAV file
-    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.test_id+os.path.sep
+    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep
 
-    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + ".WAV")
+    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
     #Check if wave file is 16bit or 32 bit. 24bit is not supported
     wav_data_type = wav_sample.dtype
     #We can convert our sound array to floating point values ranging from -1 to 1 as follows
@@ -129,9 +129,9 @@ def run_convert_audio_file(args):
     # app recording SampleX.3pg the standard for android
     # app recording SampleX.caf the standard for iOS
     # Create SampleX.WAV the standard WAV files
-    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.test_id+os.path.sep
+    working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep
     if args.audio_file.endswith(".3gp"):
-        os.system("ffmpeg -i "+working_filepath+args.audio_file+" -y -ss 1 -t 1 -ab 256k -ar 16k "+working_filepath+os.path.splitext(args.audio_file)[0] + ".WAV") #ffmpeg to wav
+        os.system("ffmpeg -i "+working_filepath+args.audio_file+" -y -ss 1 -t 1 -ab 256k -ar 16k "+working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV") #ffmpeg to wav
         if args.verbose_mode ==1:
             print('')
             print('Convted file {}'.format(args.audio_file))
