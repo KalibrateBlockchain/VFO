@@ -41,5 +41,5 @@ def glottal_flow_extractor(wav_file_path,wav, sample_rate, section = 1):
 
     # Save
     #CISCO  np.save(save_dir + "/" + wav_file.replace('/', '_')  + ".npy", g)
-    np.save(os.path.splitext(os.path.basename(wav_file_path))[0] + ".npy", g)
+    np.save(wav_file_path+os.path.splitext(os.path.basename(wav_file_path))[0] + ".npy", g)
     return g

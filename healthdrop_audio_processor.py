@@ -13,6 +13,7 @@ import pandas as pd
 from scipy.io import wavfile
 from math import floor, ceil
 import json
+from pydub import AudioSegment
 
 import matplotlib.pyplot as plt
 import pylab
@@ -53,19 +54,33 @@ def export_results(output_file, object):
     with open(output_file, "w") as f:
         np.save(output_file, object)
 
+def detect_leading_silence(sound, silence_threshold=-50.0, chunk_size=10):
+    '''
+    sound is a pydub.AudioSegment
+    silence_threshold in dB
+    chunk_size in ms
+    '''
+    trim_ms = 0  # ms
+    while sound[trim_ms:trim_ms+chunk_size].dBFS < silence_threshold:
+        trim_ms += chunk_size
+
+    return trim_ms        
+
 def run_export_analysis(args):
     # User Have a Folder in the data_dir/UID/TestID/
     # in folder created SampleX.WAV the standard WAV files
+    # in folder created SampleXTrimmed.WAV the silence removed WAV files
     # Create SampleX.analysis.png the COVID pic
 
     working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep
-    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
+
+    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV")
     #len(wav_samples)-window_size
     if args.verbose_mode ==1:
         print('Running analysis')
     #wav_chunk = wav_sample[0:800]
     wav_chunk = wav_sample
-    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV",wav_chunk, sampling_rate)
+    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV",wav_chunk, sampling_rate)
 
     # in folder created SampleX.npy the results of the analysis
     output_filename = os.path.splitext(args.audio_file)[0] + ".npy"
@@ -77,7 +92,7 @@ def run_spectrogram_generator(args):
     # Created SampleX.png the spectrogram of the WAV file
     working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep
 
-    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
+    sampling_rate, wav_sample = wavfile.read(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV")
     #Check if wave file is 16bit or 32 bit. 24bit is not supported
     wav_data_type = wav_sample.dtype
     #We can convert our sound array to floating point values ranging from -1 to 1 as follows
@@ -135,6 +150,17 @@ def run_convert_audio_file(args):
         if args.verbose_mode ==1:
             print('')
             print('Convted file {}'.format(args.audio_file))
+    
+    # This area is going to read the sample, and create a trimmed for silence
+    sound = AudioSegment.from_file(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV", format="wav")
+    start_trim = detect_leading_silence(sound)
+    end_trim = detect_leading_silence(sound.reverse())
+
+    duration = len(sound)
+    if duration-end_trim-start_trim > 2000:
+        end_trim=duration-start_trim-2000
+    trimmed_sound = sound[start_trim:duration-end_trim]
+    trimmed_sound.export(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV", format="wav")
 
 
 
