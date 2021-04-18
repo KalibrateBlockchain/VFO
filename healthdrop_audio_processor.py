@@ -1,7 +1,11 @@
 import numpy as np
 import argparse
 import logging
+import pwd
+import grp
 import os
+import time
+import audio_parser
 from glob import glob
 import shutil
 from utils import *
@@ -16,17 +20,24 @@ import json
 from pydub import AudioSegment
 
 import matplotlib.pyplot as plt
+
 import pylab
 from scipy.fftpack import fft
 
-
 def run_analysis(wav_path,wav_chunk, sampling_rate):
+    # Rita Original Method
+    return run_analysis_RITA(wav_path,wav_chunk, sampling_rate)
+    # Andres Method
+    #return run_analysis_Andres(wav_path,wav_chunk, sampling_rate)
+
+def run_analysis_RITA(wav_path,wav_chunk, sampling_rate):
     # Save sampled audio clip
     # sample_rate, wav = wavfile.read(wav_file)
     # wav_chunk = wav[start_index:end_index]
 
     # Estimate glottis from IAIF and use that to get the alpha, beta, delta values by training against it
-    g = glottal_flow_extractor(wav_path,wav_chunk, sampling_rate,section = -1)
+    
+    g = glottal_flow_extractor(os.path.dirname(wav_path),wav_chunk, sampling_rate,section = -1)
     results = vocal_fold_estimator(wav_path,wav_chunk, sampling_rate, g, logging, t_patience = 100, section = -1)
 
     # # From csv get if the wav_file person has covid or not
@@ -49,6 +60,33 @@ def run_analysis(wav_path,wav_chunk, sampling_rate):
                # "R": results["R"][-1],
                "Rk": results["Rk"][-1]
               }
+
+def run_analysis_Andres(wav_path,wav_chunk, sampling_rate):
+    t0 = time.process_time() # Here start count time
+    t, signal , glot_flow, sr = audio_parser.load_audio(wav_path)
+    
+    #CISCO  np.save(save_dir + "/" + wav_file.replace('/', '_')  + ".npy", g)
+    #np.save(wav_file_path+os.path.splitext(os.path.basename(wav_file_path))[0] + ".npy", g)
+
+    plt.plot(t, signal, 'r-', alpha=0.5, label="audio")
+    plt.plot(t[:-1], glot_flow, 'b-', alpha=0.9, label="Glottal flow")
+    plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
+    plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+    plt.legend(loc='best')
+    plt.ylabel('audio signal')
+    plt.xlabel('$t$')
+    plt.tight_layout()
+    #plt.show()
+    
+    plt.savefig(os.path.splitext(wav_path)[0] + "-plot.png", bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
+
+    #print('audio signal',type(signal),signal.shape)
+    #print('audio time',type(t),t.shape)
+    
+    #t1 = time.process_time() # Here end counting time
+    
+    #print("Elapsed time to solve: ",t1-t0)
+
 
 def export_results(output_file, object):
     with open(output_file, "w") as f:
@@ -150,6 +188,13 @@ def run_convert_audio_file(args):
         if args.verbose_mode ==1:
             print('')
             print('Convted file {}'.format(args.audio_file))
+
+    if args.audio_file.endswith(".caf"):
+        os.system("ffmpeg -i "+working_filepath+args.audio_file+" -y -ss 1 -t 1 -ac 1 -ab 256k -ar 16k "+working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV") #ffmpeg to wav
+        if args.verbose_mode ==1:
+            print('')
+            print('Convted file {}'.format(args.audio_file))
+
     
     # This area is going to read the sample, and create a trimmed for silence
     sound = AudioSegment.from_file(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV", format="wav")
@@ -162,7 +207,12 @@ def run_convert_audio_file(args):
     trimmed_sound = sound[start_trim:duration-end_trim]
     trimmed_sound.export(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV", format="wav")
 
-
+def run_set_scan_process(args):
+    working_filepath = '/var/www/html/process_samples/'+args.user_id+'.'+os.path.splitext(args.audio_file)[0]+'.job'
+    #args.data_dir ='/var/www/html/process_samples' 
+    #Save the process job file
+    with open(working_filepath, 'wt') as outfile:
+    	json.dump(vars(args), outfile)
 
 def process_file(args):
     if args.verbose_mode == 1:
@@ -181,13 +231,43 @@ def process_file(args):
         run_export_analysis(args)
 
     if args.mode == '2':
+        logging.debug('Conver Audio Spectrogram and Analysis Mode:2')
+        logging.debug('Ownership folder fixing:'+args.data_dir+os.path.sep+args.user_id)
+        #uid=pwd.getpwnam('cisco').pw_uid
+        #gid=grp.getgrnam('www-data').gr_gid
+        #os.chown(args.data_dir+os.path.sep+args.user_id,uid,gid)
+        #logging.debug('Ownership folder fixed')
+        #logging.debug('Ownership file fixing inside:'+args.data_dir+os.path.sep+args.user_id)
+        #shutil.chown(args.data_dir+os.path.sep+args.user_id,group='www-data',recursive=True)
+        os.system('sudo -u root chown -R www-data:www-data '+args.data_dir+os.path.sep+args.user_id)
+        logging.debug('Ownership files fixed')
         run_convert_audio_file(args)
         run_spectrogram_generator(args)
         run_export_analysis(args)
 
+    if args.mode == '4':
+        logging.debug('Conver Audio Spectrogram and Analysis Mode:4')
+        logging.debug('Ownership folder fixing:'+args.data_dir+os.path.sep+args.user_id)
+        #uid=pwd.getpwnam('cisco').pw_uid
+        #gid=grp.getgrnam('www-data').gr_gid
+        #os.chown(args.data_dir+os.path.sep+args.user_id,uid,gid)
+        #logging.debug('Ownership folder fixed')
+        #run_convert_audio_file(args)
+        #run_spectrogram_generator(args)
+        #run_export_analysis(args)
+        #logging.debug('Ownership file fixing inside:'+args.data_dir+os.path.sep+args.user_id)
+        #shutil.chown(args.data_dir+os.path.sep+args.user_id,group='www-data',recursive=True)
+        os.system('sudo -u root chown -R www-data:www-data '+args.data_dir+os.path.sep+args.user_id)
+        logging.debug('Ownership files fixed')
+        run_convert_audio_file(args)
+        run_spectrogram_generator(args)
+        run_set_scan_process(args) 
 
 
 if __name__ == '__main__':
+    os.system('cd /home/cisco/VFO')
+    # logging.basicConfig(filename='healthdrop_audio_processor.log', level=logging.DEBUG,format='%(asctime)s %>
+    logging.debug('Process Started')
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, required=True)
     parser.add_argument("--user_id", type=str,required=True)
@@ -196,4 +276,5 @@ if __name__ == '__main__':
     parser.add_argument("--mode", type=str, required=True)
     parser.add_argument("--verbose_mode", type=str, required=False)
     args = parser.parse_args()
+    logging.debug(args)
     process_file(args)
