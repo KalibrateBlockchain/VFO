@@ -2,7 +2,7 @@
 from typing import Callable, List, Optional
 
 import numpy as np
-from Assimulo.problem import Implicit_Problem
+from assimulo-3.2.problem import Implicit_Problem
 from matplotlib import pyplot as plt
 
 
