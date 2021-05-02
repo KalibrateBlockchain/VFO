@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-import logging
+#import logging
 import pwd
 import grp
 import os
@@ -215,6 +215,9 @@ def run_set_scan_process(args):
     	json.dump(vars(args), outfile)
 
 def process_file(args):
+    
+    logging.debug('process_file')
+    
     if args.verbose_mode == 1:
         print('Processing Audio File')
 
