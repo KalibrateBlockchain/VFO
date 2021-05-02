@@ -32,7 +32,7 @@ mpl.rcParams['legend.fontsize'] = 17
 mpl.rcParams['text.usetex']     = True
 mpl.rcParams['font.family']     = 'serif'
 
-np.random.seed(123)
+#np.random.seed(123)
 
 ########################################################################
 # Routines that open *.wav files
