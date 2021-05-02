@@ -244,8 +244,11 @@ def process_file(args):
         #shutil.chown(args.data_dir+os.path.sep+args.user_id,group='www-data',recursive=True)
         os.system('sudo -u root chown -R www-data:www-data '+args.data_dir+os.path.sep+args.user_id)
         logging.debug('Ownership files fixed')
+        logging.debug('run_convert_audio_file(args)')
         run_convert_audio_file(args)
+        logging.debug('run_spectrogram_generator(args)')
         run_spectrogram_generator(args)
+        logging.debug('run_export_analysis(args)')
         run_export_analysis(args)
 
     if args.mode == '4':
