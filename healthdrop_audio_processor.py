@@ -265,7 +265,7 @@ def process_file(args):
 
 
 if __name__ == '__main__':
-    os.system('cd /home/cisco/VFO')
+    ####os.system('cd /home/cisco/VFO')
     # logging.basicConfig(filename='healthdrop_audio_processor.log', level=logging.DEBUG,format='%(asctime)s %>
     logging.debug('Process Started')
     parser = argparse.ArgumentParser()
