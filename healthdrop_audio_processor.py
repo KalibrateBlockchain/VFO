@@ -273,6 +273,7 @@ def process_file(args):
 if __name__ == '__main__':
     ####os.system('cd /home/cisco/VFO')
     # logging.basicConfig(filename='healthdrop_audio_processor.log', level=logging.DEBUG,format='%(asctime)s %>
+    np.random.seed(123)
     logger = logging.getLogger('my_logger')
     logging.basicConfig(level=logging.DEBUG)
     logging.debug('Process Started')
