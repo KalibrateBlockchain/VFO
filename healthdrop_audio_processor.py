@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-#import logging
+import logging
 import pwd
 import grp
 import os
