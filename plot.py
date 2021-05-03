@@ -44,7 +44,6 @@ def plot_phasor(wav_file, results, output_dir):
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
 
-    plt.rcParams['text.usetex'] = True
     # Plot states
     plt.figure()
     plt.subplot(121)
@@ -66,8 +65,8 @@ def plot_phasor(wav_file, results, output_dir):
 
     plt.subplot(122)
     plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
-    plt.xlabel(r'$\xi_l$')
-    plt.ylabel(r'$\dot{\xi}_l$')
+    #plt.xlabel(r'$\xi_l$')
+    #plt.ylabel(r'$\dot{\xi}_l$')
     plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
 
    #Plot hide it all
