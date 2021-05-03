@@ -68,7 +68,7 @@ def plot_phasor(wav_file, results, output_dir):
     #plt.xlabel(r'$\xi_l$')
     #plt.ylabel(r'$\dot{\xi}_l$')
     #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
-    plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}")
+    plt.figtext(0.5, 0.01, "Residual")
 
    #Plot hide it all
     ax = plt.gca()
