@@ -14,7 +14,7 @@ from math import floor, ceil
 
 #np.random.seed(123)
 
-#CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 100, section = 1):
+#CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 500, section = 1):
 def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, logger, t_patience = 500, section = 1):
     """
     Inputs: wav_file_path: Path to read from actual wavfile
