@@ -44,6 +44,7 @@ def plot_phasor(wav_file, results, output_dir):
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
 
+    plt.rcParams['text.usetex'] = True
     # Plot states
     plt.figure()
     plt.subplot(121)
