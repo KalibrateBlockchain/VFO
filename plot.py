@@ -19,11 +19,9 @@ def plot_phasor(wav_file, results, output_dir):
    
    # Initial conditions
     t_max = 500
-    plt.rcParams.update({
-    "font.family": "serif",   # specify font family here
-    "font.serif": ["Times"],  # specify font here
-    "font.size":11})          # specify font size here
-
+    params = {'text.usetex': False, 'mathtext.fontset': 'stixsans'}
+    plt.rcParams.update(params)
+    
     vdp_init_t = 0.0
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
 
