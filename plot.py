@@ -14,8 +14,10 @@ def plot_phasor(wav_file, results, output_dir):
     """
     Input: results, save_dir
     Output: save plot
-    """
-    # Initial conditions
+    
+   """
+   plt.style.use(['science','no-latex'])
+   # Initial conditions
     t_max = 500
 
     vdp_init_t = 0.0
