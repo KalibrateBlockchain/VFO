@@ -46,7 +46,7 @@ def run_analysis_RITA(wav_path,wav_chunk, sampling_rate):
     # label = x['label'].max()
 
     # Save phasor plot and mel spectrogram for IAIF and estimated one
-    Sr, Sl = plot_phasor(wav_path, results, "")
+    Sr, Sl = plot_phasor(wav_path, results, "", g, sampling_rate)
     # S.append([wav_file, label, Sr, Sl, results["alpha"][-1], results["beta"][-1], results["delta"][-1]])
     # plot_mel(wav_file, sample_rate, g, results['u0'], plot_dir_mel_spectrogram_true, plot_dir_mel_spectrogram_est, results)
 
