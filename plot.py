@@ -160,3 +160,45 @@ def plot_mel(wav_file, sample_rate, g, g_est, plot_dir_mel_spectrogram_true, plo
     plt.clf()
     plt.cla()
     plt.close()
+    
+    
+def calc_RK(wav_file, sample_rate, glottal, alpha, beta, delta):
+    # Set constants
+    M = 0.5  # mass, g/cm^2
+    B = 100  # damping, dyne s/cm^3
+    d = 1.75  # length of vocal folds, cm
+    x0 = 0.1  # half glottal width at rest position, cm
+    tau = 1e-3  # time delay for surface wave to travel half glottal height, ms
+    c = 5000  # air particle velocity, cm/s
+    eta = 1.0  # nonlinear factor for energy dissipation at large amplitude
+
+    vdp_init_t = 0.0
+    vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
+    num_tsteps = len(wav_file)  # total number of time steps
+    T = len(wav_file) / float(sample_rate)  # total time, s
+
+    K = B ** 2 / (beta ** 2 * M)
+    Ps = (alpha * x0 * np.sqrt(M * K)) / tau
+    time_scaling = np.sqrt(K / float(M))  # t -> s
+    x_scaling = np.sqrt(eta)
+
+    vdp_params = [alpha, beta, delta]
+    sol = ode_solver(
+        vdp_coupled,
+        vdp_jacobian,
+        vdp_params,
+        vdp_init_state,
+        (time_scaling * vdp_init_t),
+        solver="lsoda",
+        ixpr=0,
+        dt=(time_scaling / float(sample_rate)),  # dt -> ds
+        tmax=(time_scaling * T),
+
+        X = sol[:, [1, 3]]  # vocal fold displacement (right, left), cm
+        dX = sol[:, [2, 4]]  # cm/s
+        u0 = c * d * (np.sum(X, axis=1) + 2 * x0)  # volume velocity flow, cm^3/s
+        u0 = u0 / np.linalg.norm(u0) * np.linalg.norm(glottal_flow)  # normalize
+        R = u0 - glottal_flow
+        Rk = np.sqrt(np.sum(R ** 2))
+        
+        return RK
