@@ -48,7 +48,7 @@ def plot_phasor(wav_file, results, output_dir, g, sampling_rate):
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
     
-    Rkk = calc_RK(wav_file, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1]):
+    Rkk = calc_RK(wav_file, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1])
 
     # Plot states
     plt.figure()
