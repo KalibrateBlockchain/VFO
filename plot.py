@@ -10,7 +10,7 @@ from solvers.ode_solvers.dae_solver import dae_solver
 import librosa
 import librosa.display
 
-def plot_phasor(wav_file, results, output_dir):
+def plot_phasor(wav_file, results, output_dir, g, sampling_rate):
     """
     Input: results, save_dir
     Output: save plot
@@ -47,6 +47,8 @@ def plot_phasor(wav_file, results, output_dir):
     # Get steady state
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
+    
+    Rkk = calc_RK(wav_file, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1]):
 
     # Plot states
     plt.figure()
@@ -71,7 +73,7 @@ def plot_phasor(wav_file, results, output_dir):
     plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
     #plt.xlabel(r'$\xi_l$')
     #plt.ylabel(r'$\dot{\xi}_l$')
-    plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, "Residual = {:.3f}  {:.3f}, alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], Rkk, results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
 
    #Plot hide it all
