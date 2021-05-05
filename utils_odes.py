@@ -28,8 +28,12 @@ mpl.rcParams['axes.labelsize']  = 17
 mpl.rcParams['xtick.labelsize'] = 17
 mpl.rcParams['ytick.labelsize'] = 17
 mpl.rcParams['legend.fontsize'] = 17
-mpl.rcParams['text.usetex']     = True
+#mpl.rcParams['text.usetex']     = True
 mpl.rcParams['font.family']     = 'serif'
+
+mpl.rcParams['text.usetex'] = False
+mpl.rcParams['mathtext.fontset'] = 'stixsans'
+
 
 import warnings
 warnings.filterwarnings("ignore")
