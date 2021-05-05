@@ -204,11 +204,11 @@ def calc_RK(wav_file, sample_rate, glottal, alpha, beta, delta):
         tmax=(time_scaling * T),
         )
     
-        X = sol[:, [1, 3]]  # vocal fold displacement (right, left), cm
-        dX = sol[:, [2, 4]]  # cm/s
-        u0 = c * d * (np.sum(X, axis=1) + 2 * x0)  # volume velocity flow, cm^3/s
-        u0 = u0 / np.linalg.norm(u0) * np.linalg.norm(glottal_flow)  # normalize
-        R = u0 - glottal_flow
-        Rk = np.sqrt(np.sum(R ** 2))
-        
-        return RK
+    X = sol[:, [1, 3]]  # vocal fold displacement (right, left), cm
+    dX = sol[:, [2, 4]]  # cm/s
+    u0 = c * d * (np.sum(X, axis=1) + 2 * x0)  # volume velocity flow, cm^3/s
+    u0 = u0 / np.linalg.norm(u0) * np.linalg.norm(glottal_flow)  # normalize
+    R = u0 - glottal_flow
+    Rk = np.sqrt(np.sum(R ** 2))
+    
+    return RK
