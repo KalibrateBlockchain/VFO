@@ -22,6 +22,7 @@ import matplotlib.mlab as mlab
 from math import pi, sin, sqrt, pow
 
 from utils_audio import *
+from plot import plot_phasor
 
 #For 0.45\textwidth figs works ok
 mpl.rcParams['axes.labelsize']  = 17
