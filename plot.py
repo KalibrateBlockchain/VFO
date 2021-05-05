@@ -223,5 +223,7 @@ def calc_RK(wav_chunk, sample_rate, glottal_flow, alpha, beta, delta):
     
     R = u0 - glottal_flow
     Rk = np.sqrt(np.sum(R ** 2))
+    logger.info(f"Rk = {Rk:.4f}")
     
-    return RK
+    
+    return Rk
