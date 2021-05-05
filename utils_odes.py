@@ -223,7 +223,7 @@ def foo_main(audio_file=None):
     print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
     print('')
     
-    Sr, Sl = plot_phasor(wav_path, wav_chunk, A, B, D, "", g, sampling_rate)
+    Sr, Sl = plot_phasor(audio_file, wav_chunk, A, B, D, "", g, sampling_rate)
     
     return t,data,t_model,K*u0,x,u,y,v,title
 
