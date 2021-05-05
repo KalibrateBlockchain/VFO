@@ -11,7 +11,7 @@ from solvers.ode_solvers.dae_solver import dae_solver
 import librosa
 import librosa.display
 
-def plot_phasor(wav_file, results, output_dir, g, sampling_rate):
+def plot_phasor(wav_file, wav_chunk, results, output_dir, g, sampling_rate):
     """
     Input: results, save_dir
     Output: save plot
@@ -49,7 +49,7 @@ def plot_phasor(wav_file, results, output_dir, g, sampling_rate):
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
     
-    Rkk = calc_RK(wav_file, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1])
+    Rkk = calc_RK(wav_chunk, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1])
 
     # Plot states
     plt.figure()
@@ -165,7 +165,7 @@ def plot_mel(wav_file, sample_rate, g, g_est, plot_dir_mel_spectrogram_true, plo
     plt.close()
     
     
-def calc_RK(wav_file, sample_rate, glottal_flow, alpha, beta, delta):
+def calc_RK(wav_chunk, sample_rate, glottal_flow, alpha, beta, delta):
      
     logger = logging.getLogger('my_logger')
     logging.basicConfig(level=logging.DEBUG)
@@ -186,8 +186,8 @@ def calc_RK(wav_file, sample_rate, glottal_flow, alpha, beta, delta):
 
     vdp_init_t = 0.0
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
-    num_tsteps = len(glottal_flow)  # total number of time steps
-    T = len(glottal_flow) / float(sample_rate)  # total time, s
+    num_tsteps = len(wav_chunk)  # total number of time steps
+    T = len(wav_chunk) / float(sample_rate)  # total time, s
 
     K = B ** 2 / (beta ** 2 * M)
     Ps = (alpha * x0 * np.sqrt(M * K)) / tau
@@ -216,7 +216,7 @@ def calc_RK(wav_file, sample_rate, glottal_flow, alpha, beta, delta):
 
     logger.info(
             f"time_scaling {time_scaling:.4f} | T = {T:.4f}   "
-            f"len(wav_file) = {len(wav_file):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0)}"
+            f"len(wav_chunk) = {len(wav_chunk):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0)}"
         )
     
     R = u0 - glottal_flow
