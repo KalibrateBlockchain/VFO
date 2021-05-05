@@ -49,7 +49,7 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
     Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
     
-    Rkk = calc_RK(wav_chunk, sampling_rate, g, results['alpha'][-1], results['beta'][-1], results['delta'][-1])
+    Rkk = calc_RK(wav_chunk, sampling_rate, g, alpha, beta, delta)
 
     # Plot states
     plt.figure()
@@ -74,7 +74,7 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
     #plt.xlabel(r'$\xi_l$')
     #plt.ylabel(r'$\dot{\xi}_l$')
-    plt.figtext(0.5, 0.01, "Residual = {:.3f}  {:.3f}, alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], Rkk, results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, "Residual = {:.3f}, alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
 
    #Plot hide it all
