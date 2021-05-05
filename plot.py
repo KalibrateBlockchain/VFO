@@ -186,8 +186,8 @@ def calc_RK(wav_file, sample_rate, glottal_flow, alpha, beta, delta):
 
     vdp_init_t = 0.0
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
-    num_tsteps = len(wav_file)  # total number of time steps
-    T = len(wav_file) / float(sample_rate)  # total time, s
+    num_tsteps = len(glottal_flow)  # total number of time steps
+    T = len(glottal_flow) / float(sample_rate)  # total time, s
 
     K = B ** 2 / (beta ** 2 * M)
     Ps = (alpha * x0 * np.sqrt(M * K)) / tau
