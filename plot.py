@@ -167,6 +167,9 @@ def plot_mel(wav_file, sample_rate, g, g_est, plot_dir_mel_spectrogram_true, plo
     
 def calc_RK(wav_file, sample_rate, glottal, alpha, beta, delta):
      
+    logger = logging.getLogger('my_logger')
+    logging.basicConfig(level=logging.DEBUG)
+
     logger.info(
             f"sample_rate {sample_rate:.4f} | alpha = {alpha:.4f}   "
             f"beta = {beta:.4f}   delta = {delta:.4f}"
