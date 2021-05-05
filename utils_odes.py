@@ -161,7 +161,11 @@ def foo_main(audio_file=None):
         t , data   = synthetic_dataset()
         audio_file = 'None.txt'
     else:
-        t, signal , data = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
+        time_series, audio_wav , glotal_signal, sample_rate = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
+        
+        t = time_series
+        signal = audio_wav
+        data = glotal_signal
     
     # Define initial guess and ranges for each parameter to fit (stage least squares classic)
     ID      = ['x0','u0','y0','v0','A' ,'B' ,'D']
