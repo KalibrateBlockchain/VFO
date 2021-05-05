@@ -216,7 +216,7 @@ def calc_RK(wav_file, sample_rate, glottal_flow, alpha, beta, delta):
 
     logger.info(
             f"time_scaling {time_scaling:.4f} | T = {T:.4f}   "
-            f"len(wave_file) = {len(wave_file):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0)}"
+            f"len(wav_file) = {len(wav_file):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0)}"
         )
     
     R = u0 - glottal_flow
