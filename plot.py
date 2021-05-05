@@ -208,6 +208,11 @@ def calc_RK(wav_chunk, sample_rate, glottal_flow, alpha, beta, delta):
         tmax=(time_scaling * T),
         )
     
+        if len(sol) > len(wav_chunk):
+            sol = sol[:-1]
+        assert len(sol) == len(wav_chunk), f"Inconsistent length: ODE sol ({len(sol):d}) / wav samples ({len(wav_samples):d})"
+
+    
     
     X = sol[:, [1, 3]]  # vocal fold displacement (right, left), cm
     dX = sol[:, [2, 4]]  # cm/s
@@ -216,10 +221,10 @@ def calc_RK(wav_chunk, sample_rate, glottal_flow, alpha, beta, delta):
 
     logger.info(
             f"time_scaling {time_scaling:.4f} | T = {T:.4f}   "
-            f"len(wav_chunk) = {len(wav_chunk):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0)}"
+            f"len(wav_chunk) = {len(wav_chunk):.4f}   len(glottal_flow) = {len(glottal_flow):.4f} len(u0) = {len(u0):4f}"
         )
     
-    R = u0 - glottal_flow
+    R = u0[:len(glottal_flow)] - glottal_flow
     Rk = np.sqrt(np.sum(R ** 2))
     
     return RK
