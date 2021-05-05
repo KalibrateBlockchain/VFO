@@ -162,11 +162,9 @@ def foo_main(audio_file=None):
         t , data   = synthetic_dataset()
         audio_file = 'None.txt'
     else:
-        t, wav_chunk, g, sampling_rate = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
-   
-    signal = wav_chunk
-    data = g
-    
+        t, signal, data, sampling_rate, audio_signal, glottal_signal = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
+        
+       
     # Define initial guess and ranges for each parameter to fit (stage least squares classic)
     ID      = ['x0','u0','y0','v0','A' ,'B' ,'D']
     #i0      = [0,0.1,0,0.1,0.90,0.90,0.90]
@@ -224,7 +222,7 @@ def foo_main(audio_file=None):
     print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
     print('')
     
-    Sr, Sl = plot_phasor(audio_file, wav_chunk, A, B, D, "", g, sampling_rate)
+    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", glottal_signal, sampling_rate)
     
     return t,data,t_model,K*u0,x,u,y,v,title
 
