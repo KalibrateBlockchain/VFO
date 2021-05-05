@@ -208,7 +208,7 @@ def calc_RK(wav_chunk, sample_rate, glottal_flow, alpha, beta, delta):
         tmax=(time_scaling * T),
         )
     
-    if len(sol) > len(wav_chunk)
+    if len(sol) > len(wav_chunk):
         sol = sol[:-1]   
     
     X = sol[:, [1, 3]]  # vocal fold displacement (right, left), cm
