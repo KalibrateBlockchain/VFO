@@ -155,8 +155,12 @@ def load_audio_pypevoc(filename):
     
     y = y[floor(len(y)/2): ceil(len(y)/2 + sr)] # This is sth. to reduce the length of the signal
     
+    audio_signal = y
+    
     glottal, dg, vt, gf = iaif_ola(y, Fs=sr , tract_order=2 * int(np.round(sr / 2000)) + 4 , glottal_order=2 * int(np.round(sr / 4000)))
     t             = np.arange(len(y))/sr
+    
+    glottal_signal = glottal
     
     start , end = extract_glottal_features(y, sr)
     
@@ -175,7 +179,7 @@ def load_audio_pypevoc(filename):
     print('Processed Signal size :',end-start)
     print('Analyzed data frames  :',start,end)
     
-    return t,y,glottal,sr
+    return t,y,glottal,sr,audio_signal,glottal_signal
 
 ########################################################################
 # Deprecated functions
