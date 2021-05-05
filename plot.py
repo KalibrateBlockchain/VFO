@@ -11,7 +11,7 @@ from solvers.ode_solvers.dae_solver import dae_solver
 import librosa
 import librosa.display
 
-def plot_phasor(wav_file, wav_chunk, results, output_dir, g, sampling_rate):
+def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling_rate):
     """
     Input: results, save_dir
     Output: save plot
@@ -30,7 +30,7 @@ def plot_phasor(wav_file, wav_chunk, results, output_dir, g, sampling_rate):
     # vdp_params = [0.64, 0.32, 1.6]  # torus
     # vdp_params = [0.7, 0.32, 1.6]  # two cycle
     # vdp_params = [0.8, 0.32, 1.6]  # one cycle
-    vdp_params = [results['alpha'][-1], results['beta'][-1], results['delta'][-1]]
+    vdp_params = [alpha, beta, delta]
 
     # Solve vocal fold displacement model
     sol = ode_solver(
