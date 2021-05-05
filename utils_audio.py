@@ -27,7 +27,8 @@ from GCI import SE_VQ_varF0, IAIF, get_vq_params
 
 from scipy.integrate import cumtrapz
 
-from PyPeVoc.pypevoc.speech.glottal import iaif_ola, lpcc2pole
+#from PyPeVoc.pypevoc.speech.glottal import iaif_ola, lpcc2pole
+from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 
 #For 0.45\textwidth figs works ok
 mpl.rcParams['axes.labelsize']  = 17
