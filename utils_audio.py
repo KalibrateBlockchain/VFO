@@ -175,7 +175,7 @@ def load_audio_pypevoc(filename):
     print('Processed Signal size :',end-start)
     print('Analyzed data frames  :',start,end)
     
-    return t,y,glottal
+    return t,y,glottal,sr
 
 ########################################################################
 # Deprecated functions
