@@ -11,10 +11,10 @@ from __future__ import unicode_literals
 import os, sys
 from utils_odes import *
 
-if __name__ == "__andres_main__":
+if __name__ == "__main__":
 
 
-    print('Usage: python [andres_main.py] [audio_file]')
+    print('Usage: python [main.py] [audio_file]')
     
     if(len(sys.argv) == 1):
         t,data,t_model,u0,x,u,y,v,title = foo_main()
