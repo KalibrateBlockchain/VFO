@@ -80,7 +80,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced
     plt.title('Noise Reduced Audio')
     ax.plot(nr_audio)
-    plt.show()
+    #plt.show()
 
     # remove the silence part
     nrt_audio , ix = lr.effects.trim(nr_audio)
