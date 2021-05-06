@@ -46,6 +46,7 @@ from scipy.io import wavfile
 from math import floor, ceil
 import json
 from pydub import AudioSegment
+from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 
 import matplotlib.pyplot as plt
 
