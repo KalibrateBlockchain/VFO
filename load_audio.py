@@ -81,7 +81,8 @@ def load_audio(args):
     plt.savefig("/VFO/Sample_files/NoiseReducedAudio")
 
     # remove the silence part
-    nrt_audio = lr.effects.trim(nr_audio, top_db=5)
+    #nrt_audio = lr.effects.trim(nr_audio, top_db=5)
+    nrt_audio = detect_leading_silence(nr_audio)
 
     # trim 0.1 seconds from beginning and end
     nrt_audio = nrt_audio[int(s_rate * 0.1): int(len(nrt_audio)-(s_rate * 0.1))]    
@@ -100,6 +101,19 @@ def load_audio(args):
     plt.savefig("/VFO/Sample_files/GlottalAudio")
 
     return nrt_audio, gl_audio
+
+def detect_leading_silence(sound, silence_threshold=-50.0, chunk_size=10):
+    '''
+    sound is a pydub.AudioSegment
+    silence_threshold in dB
+    chunk_size in ms
+    '''
+    trim_ms = 0  # ms
+    while sound[trim_ms:trim_ms+chunk_size].dBFS < silence_threshold:
+        trim_ms += chunk_size
+
+    return trim_ms        
+
 
 
 if __name__ == '__main__':
