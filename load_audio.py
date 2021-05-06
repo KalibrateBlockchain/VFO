@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import IPython
 from scipy.io import wavfile
 import noisereduce as nr
@@ -9,7 +10,6 @@ import numpy as np
 import io
 # %matplotlib inline   
 
-from __future__ import unicode_literals
 import os, sys
 import numpy as np
 import librosa as lr
