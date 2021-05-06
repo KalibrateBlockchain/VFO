@@ -153,9 +153,8 @@ def load_audio_pypevoc(filename):
     # remove the silence part
     y , ix = lr.effects.trim(y)
     
-    #y = y[floor(len(y)/3): ceil(len(y)/3 + sr)] # This is sth. to reduce the length of the signal
-    y = y[2000: 2000 + sr] # This is sth. to reduce the length of the signal
-    
+    y = y[floor(len(y)/2) - 1000: ceil(len(y)/2 + sr - 1000)] # This is sth. to reduce the length of the signal
+     
     audio_signal = y
     
     glottal, dg, vt, gf = iaif_ola(y, Fs=sr , tract_order=2 * int(np.round(sr / 2000)) + 4 , glottal_order=2 * int(np.round(sr / 4000)))
