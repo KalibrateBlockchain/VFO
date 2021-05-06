@@ -56,7 +56,7 @@ from scipy.fftpack import fft
 
 def load_audio(args):
 
-    s_rate, rw_audio = wavfile.read(args.data_dir + os.path.sep + args.user_id + os.path.sep + args.audio_file)
+    s_rate, rw_audio = wavfile.read(args.data_dir+os.path.sep+args.user_id+os.path.sep+args.audio_file)
     fig, ax = plt.subplots(figsize=(20,3)) #display raw_audio entire
     plt.title('Raw Audio')
     ax.plot(rw_audio)
