@@ -7,8 +7,7 @@ from noisereduce.generate_noise import band_limited_noise
 import matplotlib.pyplot as plt
 import urllib.request
 import numpy as np
-import io
-%matplotlib inline   
+import io   
 
 import os, sys
 import numpy as np
@@ -56,6 +55,7 @@ from scipy.fftpack import fft
 
 
 def load_audio(args):
+    %matplotlib inline
     
     working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.audio_file
     logging.debug(working_filepath)
