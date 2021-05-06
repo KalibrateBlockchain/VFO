@@ -86,7 +86,7 @@ def load_audio(args):
     
     fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced trimmed audio
     plt.title('Noise Reduced Trimmed Audio')
-    ax.plot(rrt_audio)
+    ax.plot(nrt_audio)
     
     # filter glotal signal
     gl_audio, dg, vt, gf = iaif_ola(nrt_audio, Fs=s_rate , tract_order=2 * int(np.round(s_rate / 2000)) + 4 , glottal_order=2 * int(np.round(s_rate / 4000)))
