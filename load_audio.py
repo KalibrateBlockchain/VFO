@@ -55,7 +55,7 @@ from scipy.fftpack import fft
 
 
 def load_audio(args):
-    %matplotlib inline
+#    %matplotlib inline
     
     working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.audio_file
     logging.debug(working_filepath)
@@ -71,6 +71,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display noise
     plt.title('Noise')
     ax.plot(ns_audio)
+    plt.show()
 
     # Here's the call to the noise reduction routine
     nr_audio = nr.reduce_noise(rw_audio, ns_audio, prop_decrease=1.0)
@@ -78,6 +79,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display raw_audio entire
     plt.title('Noise Reduced Audio')
     ax.plot(rw_audio)
+    plt.show()
 
     # remove the silence part
     nrt_audio , ix = lr.effects.trim(nr_audio)
@@ -88,6 +90,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced trimmed audio
     plt.title('Noise Reduced Trimmed Audio')
     ax.plot(nrt_audio)
+    plt.show()
     
     # filter glotal signal
     gl_audio, dg, vt, gf = iaif_ola(nrt_audio, Fs=s_rate , tract_order=2 * int(np.round(s_rate / 2000)) + 4 , glottal_order=2 * int(np.round(s_rate / 4000)))
@@ -95,6 +98,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display glottal audio
     plt.title('Glottal Audio')
     ax.plot(gl_audio)
+    plt.show()
 
     return nrt_audio, gl_audio
 
