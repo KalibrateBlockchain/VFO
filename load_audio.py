@@ -58,7 +58,8 @@ def load_audio(args):
     
     working_filepath = args.data_dir+os.path.sep+args.user_id+os.path.sep+args.audio_file
     logging.debug(working_filepath)
-    s_rate, rw_audio = wavfile.read(working_filepath)
+    rw_audio, s_rate = librosa.load(working_filepath)
+    #s_rate, rw_audio = wavfile.read(working_filepath)
     fig, ax = plt.subplots(figsize=(20,3)) #display raw_audio entire
     plt.title('Raw Audio')
     ax.plot(rw_audio)
