@@ -164,7 +164,7 @@ def load_audio_pypevoc(filename):
     
     start , end = extract_glottal_features(y, sr)
     
-    end = start + 2000 # For Calvin's audio files & other files as well (len 2k also good)
+    end = start + 10000 # For Calvin's audio files & other files as well (len 2k also good)
     
     t       = t[start:end]
     glottal = glottal[start:end]
