@@ -64,7 +64,7 @@ def load_audio(args):
     fig, ax = plt.subplots(figsize=(20,3)) #display raw_audio entire
     plt.title('Raw Audio')
     ax.plot(rw_audio)
-    plt.show()
+    ax.show()
     
     # Here's the noise clip extracted from the raw_audio beginning at 0.3 seconds, and ending at 1.0 seconds
     ns_audio = rw_audio[int(s_rate*.3):int(s_rate*1.0)]
