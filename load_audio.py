@@ -81,7 +81,7 @@ def load_audio(args):
     plt.savefig("/VFO/Sample_files/NoiseReducedAudio")
 
     # remove the silence part
-    nrt_audio, l = lr.effects.trim(nr_audio, top_db=0.1, frame_length=300, hop_length=50)
+    nrt_audio, l = lr.effects.trim(nr_audio, top_db=0.01, frame_length=300, hop_length=50)
     #nrt_audio = detect_leading_silence(nr_audio)
 
     # trim 0.1 seconds from beginning and end
