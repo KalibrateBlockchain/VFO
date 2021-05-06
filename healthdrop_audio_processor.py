@@ -39,7 +39,7 @@ def run_analysis_RITA(wav_path,wav_chunk, sampling_rate):
     # Estimate glottis from IAIF and use that to get the alpha, beta, delta values by training against it
     
     g = glottal_flow_extractor(os.path.dirname(wav_path),wav_chunk, sampling_rate,section = -1)
-    results = vocal_fold_estimator(wav_path,wav_chunk, sampling_rate, g, logging, t_patience = 5, section = -1)
+    results = vocal_fold_estimator(wav_path,wav_chunk, sampling_rate, g, logging, t_patience = 100, section = -1)
 
     # # From csv get if the wav_file person has covid or not
     # a = wav_file.replace('_','|').split('|')
