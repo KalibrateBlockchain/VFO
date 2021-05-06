@@ -153,7 +153,7 @@ def load_audio_pypevoc(filename):
     # remove the silence part
     y , ix = lr.effects.trim(y)
     
-    y = y[floor(len(y)/2): ceil(len(y)/2 + sr)] # This is sth. to reduce the length of the signal
+    y = y[floor(len(y)/3): ceil(len(y)/3 + sr)] # This is sth. to reduce the length of the signal
     
     audio_signal = y
     
@@ -164,7 +164,7 @@ def load_audio_pypevoc(filename):
     
     start , end = extract_glottal_features(y, sr)
     
-    end = start + 10000 # For Calvin's audio files & other files as well (len 2k also good)
+    end = start + 2000 # For Calvin's audio files & other files as well (len 2k also good)
     
     t       = t[start:end]
     glottal = glottal[start:end]
