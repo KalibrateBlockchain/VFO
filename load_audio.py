@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import urllib.request
 import numpy as np
 import io
-# %matplotlib inline   
+%matplotlib inline   
 
 import os, sys
 import numpy as np
