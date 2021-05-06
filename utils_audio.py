@@ -153,7 +153,7 @@ def load_audio_pypevoc(filename):
     # remove the silence part
     y , ix = lr.effects.trim(y)
     
-    y = y[floor(len(y)/2) - 1000: ceil(len(y)/2 + sr - 1000)] # This is sth. to reduce the length of the signal
+    y = y[floor(len(y)/2) - 5000: ceil(len(y)/2) + sr - 5000] # This is sth. to reduce the length of the signal
      
     audio_signal = y
     
