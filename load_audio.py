@@ -15,9 +15,9 @@ import librosa as lr
 import librosa.display
 import time
 
-import matplotlib as mpl
+#import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
+#import matplotlib.mlab as mlab
 from math import pi, sin, sqrt, pow
 
 #from peakdetect import peakdetect
@@ -46,8 +46,6 @@ from math import floor, ceil
 import json
 from pydub import AudioSegment
 from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
-
-import matplotlib.pyplot as plt
 
 import pylab
 from scipy.fftpack import fft
