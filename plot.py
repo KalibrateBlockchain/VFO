@@ -74,7 +74,7 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.plot(Sl[:, 0], Sl[:, 1], 'w.-')
     #plt.xlabel(r'$\xi_l$')
     #plt.ylabel(r'$\dot{\xi}_l$')
-    plt.figtext(0.5, 0.01, "Residual = {:.3f}, lenght = {.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.figtext(0.5, 0.01, "Residual = {:.3f}, length = {:.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
 
    #Plot hide it all
