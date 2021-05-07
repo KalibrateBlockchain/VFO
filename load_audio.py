@@ -99,6 +99,9 @@ def load_audio(args):
     plt.title('Glottal Audio')
     ax.plot(gl_audio)
     plt.savefig("/VFO/Sample_files/GlottalAudio")
+    
+    np.save("/VFO/Sample_files/NRTAUDIOFILE", nrt_audio)
+    np.save("/VFO/Sample_files/GLOTTALAUDIOFILE", gl_audio)
 
     return nrt_audio, gl_audio
 
