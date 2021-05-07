@@ -100,23 +100,35 @@ def load_audio(args):
     ax.plot(gl_audio)
     plt.savefig("/VFO/Sample_files/GlottalAudio")
     
-    np.save("/VFO/Sample_files/NRTAUDIOFILE", nrt_audio)
-    np.save("/VFO/Sample_files/GLOTTALAUDIOFILE", gl_audio)
+    #Period starting points
+    for i = 1 to len(gl_audio):
+        if glottal[(i - 1)]<= 0 & glottal[i] > 0:
+            j = j + 1
+            period[j] = i
+           
+    start_point = period[start_period]
+    end_point = period[start_period+number_of_periods]
+    analysis_audio = nrt_audio[Start_point: end_point]
+    analysis_glottal = gl_audio[Start_point: end_point]
+    
+    
+    #np.save("/VFO/Sample_files/NRTAUDIOFILE", nrt_audio)
+    #np.save("/VFO/Sample_files/GLOTTALAUDIOFILE", gl_audio)
 
-    return nrt_audio, gl_audio
+    return nrt_audio, gl_audio, analysis_audio, analysis_glottal
 
-def detect_leading_silence(sound, silence_threshold=-50.0, chunk_size=10):
-    '''
-    sound is a pydub.AudioSegment
-    silence_threshold in dB
-    chunk_size in ms
-    '''
-    trim_ms = 0  # ms
-    while sound[trim_ms:trim_ms+chunk_size].dBFS < silence_threshold:
-        trim_ms += chunk_size
-
-    return trim_ms        
-
+def initial_glot_flow(start, glottal):
+    """
+    This function returns the initial position that makes glottal flow rising up
+    after a glottal closure instant
+    """
+    val = glottal[start]
+    for k in range( len(glottal) - 10 ):
+        val_test = glottal[start + k]
+        if(val_test > val):
+            return start + k
+        else:
+            val = val_test
 
 
 if __name__ == '__main__':
