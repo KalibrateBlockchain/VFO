@@ -158,7 +158,6 @@ def alt_main(t, signal, data):
     print('Integrating ODEs with scipy v{}'.format(scp.__version__))
 
     """ This is the code taken out    
-
     if(audio_file == None):
         print('Processed audio file: ','None-Syntethic')
         t , data   = synthetic_dataset()
