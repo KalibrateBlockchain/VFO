@@ -148,7 +148,7 @@ def residual_ode(params,t,data,ID):
 ########################################################################
 # The MAIN function. Receives audio file name or nothing and do the analysis.
 ########################################################################
-def foo_main(t, signal, data, audio_file):
+def foo_main(t, audio_signal, data, audio_file):
 #def foo_main(audio_file=None):
     """
     This is the Main function, Wrapper for fitting and post-process.
