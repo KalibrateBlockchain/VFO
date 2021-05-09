@@ -146,7 +146,7 @@ def residual_ode(params,t,data,ID):
 ########################################################################
 # The MAIN function. Receives audio file name or nothing and do the analysis.
 ########################################################################
-def alt_main(t, signal, data):
+def m_main(t, signal, data):
     """
     This is the Main function, Wrapper for fitting and post-process.
     audio_file :: Optional audio file. [*.wav, *.WAV]. If none solves synthetic.
