@@ -146,6 +146,92 @@ def residual_ode(params,t,data,ID):
 ########################################################################
 # The MAIN function. Receives audio file name or nothing and do the analysis.
 ########################################################################
+def mod_main(t, signal, data):
+    """
+    This is the Main function, Wrapper for fitting and post-process.
+    audio_file :: Optional audio file. [*.wav, *.WAV]. If none solves synthetic.
+    """
+
+    t0 = time.process_time() # Here start count time
+    
+    print('Fitting ODEs running on lmfit v{}'.format(lmf.__version__))
+    print('Integrating ODEs with scipy v{}'.format(scp.__version__))
+
+    """ This is the code taken out    
+
+    if(audio_file == None):
+        print('Processed audio file: ','None-Syntethic')
+        t , data   = synthetic_dataset()
+        audio_file = 'None.txt'
+    else:
+        t, signal, data, sampling_rate, audio_signal, glottal_signal = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
+    """    
+       
+    # Define initial guess and ranges for each parameter to fit (stage least squares classic)
+    ID      = ['x0','u0','y0','v0','A' ,'B' ,'D']
+    #i0      = [0,0.1,0,0.1,0.90,0.90,0.90]
+    vi , vf = [0,0,0,0,0,0,0] , [0.1,0.1,0.1,0.1,1,1,1] # According to code, "A,B,D" they are always between (0,1)
+    
+    # First optimization stage
+    # lmfit parameter dictionary
+    params = lmf.Parameters()
+    for it in range(len(ID)):
+        params.add(ID[it], min=vi[it], max=vf[it])
+
+    # lmfit minimizer 
+    foo     = lmf.Minimizer(residual_ode, params,fcn_kws={'t': t, 'data':data,'ID':ID})
+    result  = foo.minimize(method='differential_evolution')
+    #result = foo.minimize(method='Nelder-Mead')
+    #result = foo.minimize(method='leastsq')
+
+    # Define initial guess and ranges for each parameter to fit (stage Differential Evolution)
+    i0      = [result.params[ID[0]].value , result.params[ID[1]].value , result.params[ID[2]].value , result.params[ID[3]].value ,
+               result.params[ID[4]].value , result.params[ID[5]].value , result.params[ID[6]].value]
+    
+    # Second optimization stage
+    # lmfit parameter dictionary
+    params = lmf.Parameters()
+    for it in range(len(ID)):
+        params.add(ID[it],value=i0[it], min=vi[it], max=vf[it])
+
+    # lmfit minimizer 
+    foo     = lmf.Minimizer(residual_ode, params,fcn_kws={'t': t, 'data':data,'ID':ID})
+    #result  = foo.minimize(method='differential_evolution')
+    result = foo.minimize(method='Nelder-Mead')
+    #result = foo.minimize(method='leastsq')
+
+    lmf.report_fit(result)
+    
+    # Pack results
+    sol_0   = [result.params[ID[0]].value , result.params[ID[1]].value , result.params[ID[2]].value , result.params[ID[3]].value]
+    A,B,D   =  result.params[ID[4]].value , result.params[ID[5]].value , result.params[ID[6]].value
+    dt      = 1.0e-01
+    N_steps = int((t[-1] - t[0]) / dt)
+    t_model = np.linspace(t[0],t[-1],N_steps)
+    u0,sol  = ode_solver(A,B,D,sol_0,t_model)
+    x,u,y,v = sol
+    
+    K = np.abs(np.amax(data) - np.amin(data)) / np.abs(np.amax(u0) - np.amin(u0))
+    print('Amplitude Factor',K)
+    
+    title = '$\\alpha$: ' + '{:10.3e}'.format(A) + ' $\\beta$: ' + '{:10.3e}'.format(B) + ' $\delta$: ' + '{:10.3e}'.format(D)
+    
+    # Analyze the equilibrium of the system
+    l = np.linspace(-5,5,100)
+    p,r1,i1,r2,i2 = sys_eigenvals(l,A,B,D)
+    
+    t1 = time.process_time() # Here end counting time
+    print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
+    print('')
+    
+    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", glottal_signal, sampling_rate)
+    
+    return t,data,t_model,K*u0,x,u,y,v,title
+    
+    
+########################################################################
+# The MAIN function. Receives audio file name or nothing and do the analysis.
+########################################################################
 def foo_main(audio_file=None):
     """
     This is the Main function, Wrapper for fitting and post-process.
