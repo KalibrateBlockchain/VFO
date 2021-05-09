@@ -146,7 +146,7 @@ def residual_ode(params,t,data,ID):
 ########################################################################
 # The MAIN function. Receives audio file name or nothing and do the analysis.
 ########################################################################
-def m_main(t,signal,data):
+def mod_main(audio_file=None):
     """
     This is the Main function, Wrapper for fitting and post-process.
     audio_file :: Optional audio file. [*.wav, *.WAV]. If none solves synthetic.
@@ -156,15 +156,14 @@ def m_main(t,signal,data):
     
     print('Fitting ODEs running on lmfit v{}'.format(lmf.__version__))
     print('Integrating ODEs with scipy v{}'.format(scp.__version__))
-
-    """ This is the code taken out    
+    
     if(audio_file == None):
         print('Processed audio file: ','None-Syntethic')
         t , data   = synthetic_dataset()
         audio_file = 'None.txt'
     else:
         t, signal, data, sampling_rate, audio_signal, glottal_signal = load_audio_pypevoc(audio_file)      # PyPeVoc implementation
-    """    
+        
        
     # Define initial guess and ranges for each parameter to fit (stage least squares classic)
     ID      = ['x0','u0','y0','v0','A' ,'B' ,'D']
