@@ -89,6 +89,7 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.grid(False)
 
     plt.tight_layout()
+    plt.show() #calvin added
 
     #CISCO 
     plt.savefig(os.path.splitext(wav_file)[0] + "-plot.png", bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
