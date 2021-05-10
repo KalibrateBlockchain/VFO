@@ -147,8 +147,8 @@ def residual_ode(params,t,data,ID):
     
 ########################################################################
 # The MAIN function. Receives audio file name or nothing and do the analysis.
-########################################################################
-def foo_main(t, audio_signal, data, audio_file):
+d########################################################################
+def foo_main(t, audio_signal, data, audio_file, sampling_rate):
 #def foo_main(audio_file=None):
     """
     This is the Main function, Wrapper for fitting and post-process.
@@ -225,7 +225,7 @@ def foo_main(t, audio_signal, data, audio_file):
     print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
     print('')
     
-    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", glottal_signal, sampling_rate)
+    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", data, sampling_rate)
     
     return t,data,t_model,K*u0,x,u,y,v,title
 
