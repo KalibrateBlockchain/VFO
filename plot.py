@@ -60,8 +60,8 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
 
    #Plot hide it all
     ax = plt.gca()
-    ax.axes.xaxis.set_visible(False)
-    ax.axes.yaxis.set_visible(False)
+    ax.axes.xaxis.set_visible(True)
+    ax.axes.yaxis.set_visible(True)
     ax.axes.xaxis.set_ticks([])
     ax.axes.yaxis.set_ticks([])
     ax.axes.xaxis.set_ticklabels([])
