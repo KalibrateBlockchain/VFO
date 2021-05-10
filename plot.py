@@ -77,12 +77,11 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.figtext(0.5, 0.01, "Residual = {:.3f}, length = {:.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
     
-    plt.show() #calvin added
 
    #Plot hide it all
     ax = plt.gca()
-    ax.axes.xaxis.set_visible(False)
-    ax.axes.yaxis.set_visible(False)
+    ax.axes.xaxis.set_visible(True)
+    ax.axes.yaxis.set_visible(True)
     ax.axes.xaxis.set_ticks([])
     ax.axes.yaxis.set_ticks([])
     ax.axes.xaxis.set_ticklabels([])
@@ -91,6 +90,8 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.grid(False)
 
     plt.tight_layout()
+    
+    plt.show() #calvin added
 
     #CISCO 
     plt.savefig(os.path.splitext(wav_file)[0] + "-plot.png", bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
