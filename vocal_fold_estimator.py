@@ -24,7 +24,7 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
-    logging.basicConfig(level=logging.DEBUG) 
+    logging.basicConfig(level=logging.info) 
     
     # Set constants
     M = 0.5  # mass, g/cm^2
@@ -59,7 +59,7 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
     num_tsteps = len(wav_samples)  # total number of time steps
     T = len(wav_samples) / float(sample_rate)  # total time, s
-    logger.DEBUG(
+    logger.info(
         f"Initial parameters: alpha = {alpha:.4f}   beta = {beta:.4f}   delta = {delta:.4f}"
     )
     logger.info("-" * 110)
