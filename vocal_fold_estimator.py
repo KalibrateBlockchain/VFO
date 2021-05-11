@@ -24,6 +24,8 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
+    logging.basicConfig(level=logging.DEBUG) 
+    
     # Set constants
     M = 0.5  # mass, g/cm^2
     B = 100  # damping, dyne s/cm^3
