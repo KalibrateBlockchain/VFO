@@ -24,7 +24,6 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
-    logging.basicConfig(level=logging.info) 
     
     # Set constants
     M = 0.5  # mass, g/cm^2
@@ -62,7 +61,7 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     logger.info(
         f"Initial parameters: alpha = {alpha:.4f}   beta = {beta:.4f}   delta = {delta:.4f}"
     )
-    logger.info("-" * 110)
+    logger.debug("-" * 110)
 
     # Optimize
     best_results: Dict[str, List[float]] = {  # store best results over iterations
