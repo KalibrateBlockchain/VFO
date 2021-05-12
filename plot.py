@@ -60,9 +60,9 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     # Plot states
     plt.figure()
     plt.subplot(121)
-    plt.plot(Sr[:, 0], Sr[:, 1], 'b.-')
-    plt.xlabel(r'$\xi_r$')
-    plt.ylabel(r'$\dot{\xi}_r$')
+    plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
+    #plt.xlabel(r'$\xi_r$')
+    plt.ylabel('Right')
 
    #Plot hide it all
     ax = plt.gca()
@@ -77,10 +77,10 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
 
 
     plt.subplot(122)
-    plt.plot(Sl[:, 0], Sl[:, 1], 'b.-')
-    plt.xlabel(r'$\xi_l$')
-    plt.ylabel(r'$\dot{\xi}_l$')
-    plt.figtext(0.5, 0.01, "Rk = {:.5f}, chi = {:.3f}, ln = {:.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, ch, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.plot(Sl[:, 0], Sl[:, 1], 'k.-')
+    #plt.xlabel(r'$\xi_l$')
+    plt.ylabel('Left')
+    plt.figtext(0.5, 0.01, "Rk = {:.5f}, ln = {:.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
     
 
@@ -105,11 +105,6 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.clf()
     plt.cla()
     plt.close()
-
-    # Analyze the equilibrium of the system
-    #l = np.linspace(-5,5,100)
-    #p,r1,i1,r2,i2 = sys_eigenvals(l,results["alpha"][0], results["beta"][0], results["delta"][0])
-
     
 
     return Sr, Sl
