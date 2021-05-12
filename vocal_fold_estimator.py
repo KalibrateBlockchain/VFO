@@ -186,6 +186,9 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
             f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
             f"beta = {beta_k:.4f}   delta = {delta_k:.4f}"
         )
+        
+        print('Patience = {patience:d}:{iteration:d} Residual = {Rk:.4f} | alpha = {alpha_k:.4f} beta = {beta_k:.4f} delta = {delta_k:.4f}"
+              
         if Rk < Rk_best:  # has improvement
             # Record best
             iteration_best = iteration
