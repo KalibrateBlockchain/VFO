@@ -2,6 +2,7 @@ import numpy as np
 import os
 from matplotlib import pyplot as plt
 import logging
+from scipy.stats import chisquare
 
 from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
 from models.vocal_fold.adjoint_model_displacement import adjoint_model
