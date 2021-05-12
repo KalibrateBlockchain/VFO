@@ -13,7 +13,7 @@ from math import floor, ceil
 import logging
 
 
-#np.random.seed(123)
+np.random.seed(123)
 
 #CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 500, section = 1):
 def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, logger, t_patience = 5, section = 1):
@@ -85,7 +85,9 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
         # logger.info("Solving vocal fold displacement model")
         K = B ** 2 / (beta ** 2 * M)
         Ps = (alpha * x0 * np.sqrt(M * K)) / tau
-        time_scaling = np.sqrt(K / float(M))  # t -> s
+        #time_scaling = np.sqrt(K / float(M))  # t -> s
+        time_scaling = np.sqrt(K / float(M))*100  # t -> s
+
         x_scaling = np.sqrt(eta)
         # logger.debug(
         #     f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2    "
