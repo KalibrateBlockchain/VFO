@@ -9,7 +9,7 @@ from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jac
 from models.vocal_fold.adjoint_model_displacement import adjoint_model
 from solvers.ode_solvers.ode_solver import ode_solver
 from solvers.ode_solvers.dae_solver import dae_solver
-from utils_odes import sys_eigenvals
+#from utils_odes import sys_eigenvals
 
 import librosa
 import librosa.display
@@ -107,8 +107,8 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.close()
 
     # Analyze the equilibrium of the system
-    l = np.linspace(-5,5,100)
-    p,r1,i1,r2,i2 = sys_eigenvals(l,results["alpha"][0], results["beta"][0], results["delta"][0])
+    #l = np.linspace(-5,5,100)
+    #p,r1,i1,r2,i2 = sys_eigenvals(l,results["alpha"][0], results["beta"][0], results["delta"][0])
 
     
 
