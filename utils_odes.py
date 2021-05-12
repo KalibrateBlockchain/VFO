@@ -225,7 +225,7 @@ def foo_main(t, audio_signal, data, audio_file, sampling_rate):
     print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
     print('')
     
-    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", data, sampling_rate)
+    Sr, Sl = plot_phasor(audio_file, audio_signal, A, B, D, "", data, sampling_rate*1000)
     
     return t,data,t_model,K*u0,x,u,y,v,title
 
