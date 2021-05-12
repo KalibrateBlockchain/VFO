@@ -105,9 +105,6 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     plt.cla()
     plt.close()
     
-    # Analyze the equilibrium of the system
-    l = np.linspace(-5,5,100)
-    p,r1,i1,r2,i2 = sys_eigenvals(l,alpha, beta, delta)
 
     return Sr, Sl
 
