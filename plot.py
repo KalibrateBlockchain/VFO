@@ -60,9 +60,9 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
     # Plot states
     plt.figure()
     plt.subplot(121)
-    plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
+    plt.plot(Sl[:, 0], Sl[:, 1], 'k.-')
     #plt.xlabel(r'$\xi_r$')
-    plt.ylabel('Right')
+    plt.ylabel('Left')
 
    #Plot hide it all
     ax = plt.gca()
@@ -77,10 +77,10 @@ def plot_phasor(wav_file, wav_chunk, alpha, beta, delta, output_dir, g, sampling
 
 
     plt.subplot(122)
-    plt.plot(Sl[:, 0], Sl[:, 1], 'k.-')
+    plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
     #plt.xlabel(r'$\xi_l$')
-    plt.ylabel('Left')
-    plt.figtext(0.5, 0.01, "Rk = {:.5f}, ln = {:.1f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, length, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
+    plt.ylabel('Right')
+    plt.figtext(0.5, 0.01, "Rk = {:.5f}, alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rkk, alpha, beta, delta), wrap=True, horizontalalignment='center', fontsize=12)
     #plt.figtext(0.5, 0.01, "Residual", fontfamily="sans-serif" )
     
 
