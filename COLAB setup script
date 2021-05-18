@@ -1,0 +1,37 @@
+#!pip install -q condacolab
+#import condacolab
+#condacolab.install_anaconda()
+#!conda update -n base -c defaults conda
+#!conda install -c conda-forge assimulo
+#!pip install cffi==1.14.5
+#Here's the stuff to set up COLAB...
+
+
+colab_requirements = [
+    #"pip install librosa",
+    #"pip install noisereduce",
+    #"pip install soundfile",
+    "pip install pysptk",
+    "pip install pydub",
+    "pip install lmfit",
+    #"pip install numdifftools",  
+]
+!pip install /content/drive/MyDrive/PyPeVoc-master
+
+
+
+import sys, subprocess
+
+
+
+def run_subprocess_command(cmd):
+    # run the command
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    # print the output
+    for line in process.stdout:
+        print(line.decode().strip())
+
+IN_COLAB = "google.colab" in sys.modules
+if IN_COLAB:
+    for i in colab_requirements:
+        run_subprocess_command(i)
