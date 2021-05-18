@@ -83,7 +83,6 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   p,r1,i1,r2,i2 = sys_eigenvals(l,A,B,D)
     
   t1 = time.process_time() # Here end counting time
-  print("iteration: ",count)
   print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
   print("r1 = ", r1," r2 = ",r2)
   
