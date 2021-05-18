@@ -77,6 +77,21 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   u0,sol  = ode_solver(A,B,D,sol_0,t)
 
   x,u,y,v = sol
+  
+  # Plot data to fit vs model evaluation
+
+  fig, ax = plt.subplots(figsize=(20,3)) 
+  plt.title('Fitting')
+  ax.plot(u0[:len(gl_audio_analyze)], 'b-', label='model fit')
+  ax.plot(gl_audio_analyze, 'r--', label='target')
+  #plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
+  #plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+  plt.legend(loc='best')
+  #plt.xlabel('$t$')
+  ax.set_xlabel('λ')
+  plt.show()
+  #plt.savefig(filename + '_model_fit.png')
+
     
   # Analyze the equilibrium of the system
   l = np.linspace(-5,5,100)
