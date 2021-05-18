@@ -253,6 +253,7 @@ def sys_eigenvals(l,a,b,d):
     r1 , i1 = l1.real , l1.imag
     r2 , i2 = l3.real , l3.imag
 
+    """
     print('#############################################################')
     print('Analyzing the Eigenvalues of the system.')
     print('Real negative is asympt. stable')
@@ -262,6 +263,7 @@ def sys_eigenvals(l,a,b,d):
     print('#############################################################')
     print('Real part mode 1:',r1,'Complex part mode 1:',i1)
     print('Real part mode 2:',r2,'Complex part mode 2:',i2)
+    """
     
     return P,r1,i1,r2,i2
 
