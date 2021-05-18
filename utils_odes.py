@@ -255,8 +255,8 @@ def sys_eigenvals(l,a,b,d):
 
     print('#############################################################')
     print('Analyzing the Eigenvalues of the system.')
-    print('Real negative is asympt. stable', 'This means Healthy')
-    print('Real positive is unstable', 'This means un-Healthy')
+    print('Real negative is asympt. stable')
+    print('Real positive is unstable')
     print('Complex part not zero is a spiral')
     print('Real part equal to zero is a center')
     print('#############################################################')
