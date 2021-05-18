@@ -101,4 +101,16 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
   print("r1 = ", r1," r2 = ",r2)
   
-  return A,B,D,r1,r2,startPeriod
+  res = {
+    'alpha':A,
+    'beta':B,
+    'delta':D,
+    'eigenreal1':r1,
+    'eigenreal2': r2,
+    'eigensign':np.sign(r1*r2),
+    'chisquared':result.chisqr(),
+    'gl_audio_analyze':gl_audio_analyze
+    'rwt_audio_analyze':rwt_audio_analyze,
+  }
+  
+  return res
