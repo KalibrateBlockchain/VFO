@@ -109,7 +109,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     'eigenreal2': r2,
     'eigensign':np.sign(r1*r2),
     'chisquared':result.chisqr(),
-    'gl_audio_analyze':gl_audio_analyze
+    'gl_audio_analyze':gl_audio_analyze,
     'rwt_audio_analyze':rwt_audio_analyze,
   }
   
