@@ -10,6 +10,7 @@ import librosa as lr
 import librosa.display
 import soundfile as sf
 import matplotlib.pyplot as plt
+import time
 from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
 from utils_odes import foo_main, sys_eigenvals, plot_solution
 from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
