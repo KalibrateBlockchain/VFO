@@ -14,7 +14,7 @@ from utils_odes import foo_main, sys_eigenvals, plot_solution
 from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
 from solvers.ode_solvers.ode_solver import ode_solver_1
 
-def vfo_fitter(gl_audio_all, rwt_audio_all, s_rate, period, numberOfPeriods):  
+def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):  
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
   print (startPeriod)
