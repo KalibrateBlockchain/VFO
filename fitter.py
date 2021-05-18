@@ -17,9 +17,14 @@ from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jac
 from solvers.ode_solvers.ode_solver import ode_solver_1
 
 def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):  
+  
+  mode_of_processing=1 # for console
+  #mode_of_processing=2 # for production
+  
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
-  print (startPeriod)
+  if mode_of_processing==1:
+    print (startPeriod)
 
   rwt_audio_all=rwt_audio[period[startPeriod]: ]
   rwt_audio_analyze = rwt_audio[period[startPeriod]: period[(startPeriod + numberOfPeriods)]]
@@ -27,13 +32,14 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
 
   gl_audio_all = gl_audio[period[startPeriod]:]
   gl_audio_analyze = gl_audio[period[startPeriod]: period[(startPeriod + numberOfPeriods)]]
-  fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio_analyze
-  plt.title('Glottal Audio Analyze')
-  ax.plot(gl_audio_analyze)
-
-  fig, ax = plt.subplots(figsize=(20,3)) #Audio Analyze
-  plt.title('Audio Analyze')
-  ax.plot(rwt_audio_analyze)
+  
+  if mode_of_processing==1:
+    fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio_analyze
+    plt.title('Glottal Audio Analyze')
+    ax.plot(gl_audio_analyze
+    fig, ax = plt.subplots(figsize=(20,3)) #Audio Analyze
+    plt.title('Audio Analyze')
+    ax.plot(rwt_audio_analyze)
 
   t = np.linspace(0,lr.get_duration(y=gl_audio_analyze, sr=s_rate * 1.0e-03),len(gl_audio_analyze)) # Reduce sampling rate 1k times
 
@@ -79,27 +85,24 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   x,u,y,v = sol
   
   # Plot data to fit vs model evaluation
-
-  fig, ax = plt.subplots(figsize=(20,3)) 
-  plt.title('Fitting')
-  ax.plot(u0[:len(gl_audio_analyze)], 'b-', label='model fit')
-  ax.plot(gl_audio_analyze, 'r--', label='target')
-  #plt.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-  #plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-  plt.legend(loc='best')
-  #plt.xlabel('$t$')
-  ax.set_xlabel('λ')
-  plt.show()
-  #plt.savefig(filename + '_model_fit.png')
-
+  if mode_of_processing==1:
+    fig, ax = plt.subplots(figsize=(20,3)) 
+    plt.title('Fitting')
+    ax.plot(u0[:len(gl_audio_analyze)], 'b-', label='model fit')
+    ax.plot(gl_audio_analyze, 'r--', label='target')
+    plt.legend(loc='best')
+    ax.set_xlabel('λ')
+    plt.show()
     
   # Analyze the equilibrium of the system
   l = np.linspace(-5,5,100)
   p,r1,i1,r2,i2 = sys_eigenvals(l,A,B,D)
     
   t1 = time.process_time() # Here end counting time
-  print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
-  print("r1 = ", r1," r2 = ",r2)
+  
+  if mode_of_processing==1:
+    print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
+    print("r1 = ", r1," r2 = ",r2)
   
   res = {
     'alpha':A,
@@ -109,7 +112,6 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     'eigenreal2': r2,
     'eigensign':np.sign(r1*r2),
     'chisquared':result.chisqr,
-    #'chisquared':0.004,
     'gl_audio_analyze':gl_audio_analyze,
     'rwt_audio_analyze':rwt_audio_analyze,
   }
