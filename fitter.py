@@ -115,7 +115,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     'chisquared':result.chisqr,
     'gl_audio_analyze':gl_audio_analyze,
     'rwt_audio_analyze':rwt_audio_analyze,
-    'timestamp': datetime.datetime.now()),
+    'timestamp': datetime.datetime.now(),
   }
   
   return res
