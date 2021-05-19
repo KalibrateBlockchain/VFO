@@ -112,7 +112,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     'eigenreal1':float(r1),
     'eigenreal2':float(r2),
     'eigensign':int(np.sign(r1*r2)),
-    'chisquared':float(result.chisqr),
+    #'chisquared':float(result.chisqr),
     #'gl_audio_analyze':gl_audio_analyze,
     #'rwt_audio_analyze':rwt_audio_analyze,
     'timestamp': datetime.datetime.now().isoformat(),
