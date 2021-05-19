@@ -36,7 +36,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio_analyze
     plt.title('Glottal Audio Analyze')
-    ax.plot(gl_audio_analyze
+    ax.plot(gl_audio_analyze)
     fig, ax = plt.subplots(figsize=(20,3)) #Audio Analyze
     plt.title('Audio Analyze')
     ax.plot(rwt_audio_analyze)
