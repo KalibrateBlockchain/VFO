@@ -106,16 +106,16 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     print("r1 = ", r1," r2 = ",r2)
   
   res = {
-    'alpha':A,
-    'beta':B,
-    'delta':D,
-    'eigenreal1':r1,
-    'eigenreal2': r2,
-    'eigensign':np.sign(r1*r2),
-    'chisquared':result.chisqr,
-    'gl_audio_analyze':gl_audio_analyze,
-    'rwt_audio_analyze':rwt_audio_analyze,
-    'timestamp': datetime.datetime.now(),
+    'alpha':float(A),
+    'beta':float(B),
+    'delta':float(D),
+    'eigenreal1':float(r1),
+    'eigenreal2':float(r2),
+    'eigensign':int(np.sign(r1*r2)),
+    'chisquared':float(result.chisqr),
+    #'gl_audio_analyze':gl_audio_analyze,
+    #'rwt_audio_analyze':rwt_audio_analyze,
+    'timestamp': datetime.datetime.now().isoformat(),
   }
   
   return res
