@@ -11,6 +11,7 @@ import librosa.display
 import soundfile as sf
 import matplotlib.pyplot as plt
 import time
+import datetime
 from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
 from utils_odes import foo_main, sys_eigenvals, plot_solution
 from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
@@ -114,6 +115,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     'chisquared':result.chisqr,
     'gl_audio_analyze':gl_audio_analyze,
     'rwt_audio_analyze':rwt_audio_analyze,
+    'timestamp': datetime.datetime.now()),
   }
   
   return res
