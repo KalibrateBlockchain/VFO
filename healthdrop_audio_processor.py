@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import numpy as np
 import argparse
 import logging
@@ -21,53 +22,55 @@ from pydub import AudioSegment
 
 import matplotlib.pyplot as plt
 
+
+
+
 import pylab
 from scipy.fftpack import fft
 import utils_odes
+import IPython 
+from IPython import embed 
+import random 
+import os, sys
+import io 
+import shutil
+import numpy as np
+import pandas as pd
+import scipy as scp
+from scipy.io import wavfile
+from scipy.integrate import cumtrapz
+from scipy.fftpack import fft
+import lmfit as lmf
+import argparse
+import logging
+import copy
+import pwd
+import grp
+import librosa as lr
+import librosa.display
+import soundfile as sf
+import time
+import datetime 
+import json
+import matplotlib.pyplot as plt
+from math import pi, sin, sqrt, pow, floor, ceil
+from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
+import pylab
+from PIL import Image
+from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
+from utils_odes import foo_main, sys_eigenvals, plot_solution
+from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
+from solvers.ode_solvers.ode_solver import ode_solver_1
+from fitter import vfo_fitter
 
-def run_cww_vfo(working_filepath, audio_file):
-    from __future__ import unicode_literals
-    import IPython 
-    from IPython import embed 
-    %matplotlib inline 
-    import random 
 
-    import os, sys
-    import io 
-    import shutil
-    import numpy as np
-    import pandas as pd
-    import scipy as scp
-    from scipy.io import wavfile
-    from scipy.integrate import cumtrapz
-    from scipy.fftpack import fft
-    import lmfit as lmf
-    import argparse
-    import logging
-    import copy
-    import pwd
-    import grp
-    import librosa as lr
-    import librosa.display
-    import soundfile as sf
-    import time
-    import datetime 
-    import json
-    import matplotlib.pyplot as plt
-    from math import pi, sin, sqrt, pow, floor, ceil
-    from pypevoc.speech.glottal import iaif_ola, lpcc2pole
-    import pylab
-    from PIL import Image
-    from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
-    from utils_odes import foo_main, sys_eigenvals, plot_solution
-    from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
-    from solvers.ode_solvers.ode_solver import ode_solver_1
-    from fitter import vfo_fitter
+def run_cww_vfo(working_audio_file):
+    ### audio_file = os.path.splitext(args.audio_file)[0]
 
     #mode_of_processing=1 # for console
     mode_of_processing=2 # for production
 
-    if mode_of_processing==1
+    if mode_of_processing==1:
         #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-aaaaa.wav"
         #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-CaaaT-lower-noise.wav"
         #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TLW-BAAAT.wav"
@@ -81,13 +84,13 @@ def run_cww_vfo(working_filepath, audio_file):
         print(fname)
         from google.colab import drive
         drive.mount('/content/drive')
-        CantAnalyze=plt.imread("/VFO/Sample_files/CantAnalyze.png")
-        TooNoisy=plt.imread("/VFO/Sample_files/TooNoisy.png")
+        CantAnalyze=plt.imread("Sample_files/CantAnalyze.png")
+        TooNoisy=plt.imread("Sample_files/TooNoisy.png")
 
     if mode_of_processing==2:
-        fname=(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
-        CantAnalyze=plt.imread(working_filepath+os.path+"CantAnalyze.png")
-        TooNoisy=plt.imread(working_filepath+os.path+"TooNoisy.png")
+        fname=(working_audio_file)
+        CantAnalyze=plt.imread("Sample_files/CantAnalyze.png")
+        TooNoisy=plt.imread("Sample_files/TooNoisy.png")
 
     file_audio, s_rate = sf.read(fname)
     file_audio = (file_audio / pow(2, 15)).astype("float32") # Convert from to 16-bit int to 32-bit float
@@ -109,11 +112,13 @@ def run_cww_vfo(working_filepath, audio_file):
     mean_noise=np.mean(np.abs(ns_audio))
     max_noise=0.000001
 
+    working_audio_plot_filename=os.path.splitext(working_audio_file)[0] + "-plot.png"
+
     if mean_noise>max_noise:
         if mode_of_processing==1:
             plt.imshow(TooNoisy)
         if mode_of_processing==2:
-            plt.imsave(working_filepath+os.path.splitext(args.audio_file)[0] + "-plot.png", TooNoisy)
+            plt.imsave(working_audio_plot_filename, TooNoisy)
         return
 
     if mode_of_processing==1:
@@ -225,7 +230,7 @@ def run_cww_vfo(working_filepath, audio_file):
         if mode_of_processing==1:
             plt.imshow(CantAnalyze)
         if mode_of_processing==2:
-            plt.imsave(working_filepath+os.path.splitext(args.audio_file)[0] + "-plot.png", CantAnalyze)
+            plt.imsave(working_audio_plot_filename, CantAnalyze)
         return
 
     res1=vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods)
@@ -317,7 +322,7 @@ def run_cww_vfo(working_filepath, audio_file):
         plt.show() 
 
     if mode_of_processing==2:
-        plt.savefig(working_filepath+os.path.splitext(args.audio_file)[0] + "-plot.png", bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
+        plt.savefig(working_audio_plot_filename, bbox_inches='tight',pad_inches = 0, transparent=True, edgecolor='none')
 
 
     #plt.close()
@@ -328,10 +333,10 @@ def run_cww_vfo(working_filepath, audio_file):
         if mode_of_processing==1:
             plt.imshow(TooNoisy)
         if mode_of_processing==2:
-            plt.imsave(working_filepath+os.path.splitext(args.audio_file)[0] + "-plot.png", TooNoisy)
+            plt.imsave(working_audio_plot_filename, TooNoisy)
         return
 
-    results_file = open(working_filepath+os.path.splitext(args.audio_file)[0] + ".json", "w")
+    results_file = open(os.path.splitext(working_audio_file)[0] + ".json", "w")
     json.dump(res, results_file)
     results_file.close()
     
@@ -344,6 +349,8 @@ def run_analysis(wav_path,wav_chunk, sampling_rate):
     return run_analysis_RITA(wav_path,wav_chunk, sampling_rate)
     # Andres Method
     #return run_analysis_Andres(wav_path,wav_chunk, sampling_rate)
+    # Calvin
+    #return run_cww_vfo(wav_path)
 
 def run_analysis_RITA(wav_path,wav_chunk, sampling_rate):
     # Save sampled audio clip
@@ -361,6 +368,7 @@ def run_analysis_RITA(wav_path,wav_chunk, sampling_rate):
     # label = x['label'].max()
 
     # Save phasor plot and mel spectrogram for IAIF and estimated one
+
     Sr, Sl = plot_phasor(wav_path, wav_chunk, results['alpha'][-1], results['beta'][-1], results['delta'][-1], "", g, sampling_rate)
     # S.append([wav_file, label, Sr, Sl, results["alpha"][-1], results["beta"][-1], results["delta"][-1]])
     # plot_mel(wav_file, sample_rate, g, results['u0'], plot_dir_mel_spectrogram_true, plot_dir_mel_spectrogram_est, results)
@@ -433,9 +441,12 @@ def run_export_analysis(args):
         print('Running analysis')
     #wav_chunk = wav_sample[0:800]
     wav_chunk = wav_sample
-    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV",wav_chunk, sampling_rate)
 
-    # in folder created SampleX.npy the results of the analysis
+    #ANALYSIS: NEW METHOD 
+    #run_cww_vfo(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV")
+        
+    #ANALYSIS: OLD METHOD 
+    analysis_result = run_analysis(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV",wav_chunk, sampling_rate)
     output_filename = os.path.splitext(args.audio_file)[0] + ".npy"
     export_results(working_filepath+output_filename, analysis_result)
 
@@ -510,17 +521,20 @@ def run_convert_audio_file(args):
             print('')
             print('Convted file {}'.format(args.audio_file))
 
-    
-    # This area is going to read the sample, and create a trimmed for silence
-    sound = AudioSegment.from_file(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV", format="wav")
-    start_trim = detect_leading_silence(sound)
-    end_trim = detect_leading_silence(sound.reverse())
+    trimm_audio = False
+    if trimm_audio:
+        # This area is going to read the sample, and create a trimmed for silence
+        sound = AudioSegment.from_file(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV", format="wav")
+        start_trim = detect_leading_silence(sound)
+        end_trim = detect_leading_silence(sound.reverse())
 
-    duration = len(sound)
-    if duration-end_trim-start_trim > 2000:
-        end_trim=duration-start_trim-2000
-    trimmed_sound = sound[start_trim:duration-end_trim]
-    trimmed_sound.export(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV", format="wav")
+        duration = len(sound)
+        if duration-end_trim-start_trim > 2000:
+            end_trim=duration-start_trim-2000
+        trimmed_sound = sound[start_trim:duration-end_trim]
+        trimmed_sound.export(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV", format="wav")
+    else:
+        shutil.copyfile(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV",working_filepath+os.path.splitext(args.audio_file)[0] + "-sample-trimmed.WAV")
 
 def run_set_scan_process(args):
     working_filepath = '/var/www/html/process_samples/'+args.user_id+'.'+os.path.splitext(args.audio_file)[0]+'.job'
@@ -567,15 +581,6 @@ def process_file(args):
     if args.mode == '4':
         logging.debug('Conver Audio Spectrogram and Analysis Mode:4')
         logging.debug('Ownership folder fixing:'+args.data_dir+os.path.sep+args.user_id)
-        #uid=pwd.getpwnam('cisco').pw_uid
-        #gid=grp.getgrnam('www-data').gr_gid
-        #os.chown(args.data_dir+os.path.sep+args.user_id,uid,gid)
-        #logging.debug('Ownership folder fixed')
-        #run_convert_audio_file(args)
-        #run_spectrogram_generator(args)
-        #run_export_analysis(args)
-        #logging.debug('Ownership file fixing inside:'+args.data_dir+os.path.sep+args.user_id)
-        #shutil.chown(args.data_dir+os.path.sep+args.user_id,group='www-data',recursive=True)
         os.system('sudo -u root chown -R www-data:www-data '+args.data_dir+os.path.sep+args.user_id)
         logging.debug('Ownership files fixed')
         run_convert_audio_file(args)
@@ -584,6 +589,7 @@ def process_file(args):
 
 
 if __name__ == '__main__':
+    ###os.system('cd /home/cisco/VFO')
     ####os.system('cd /home/cisco/VFO')
     # logging.basicConfig(filename='healthdrop_audio_processor.log', level=logging.DEBUG,format='%(asctime)s %>
     np.random.seed(123)

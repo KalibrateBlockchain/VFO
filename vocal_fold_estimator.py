@@ -10,12 +10,13 @@ from solvers.ode_solvers.dae_solver import dae_solver
 from solvers.ode_solvers.ode_solver import ode_solver
 from solvers.optimization import optim_adapt_step, optim_grad_step
 from math import floor, ceil
+import logging
 
 
 np.random.seed(123)
 
-#CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 100, section = 1):
-def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, logger, t_patience = 100, section = 1):
+#CISCO def vocal_fold_estimator(wav_file_path,glottal_flow, logger, t_patience = 500, section = 1):
+def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, logger, t_patience = 5, section = 1):
     """
     Inputs: wav_file_path: Path to read from actual wavfile
             glottal_flow: numpy array of glottal flow from IAIF
@@ -23,6 +24,7 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
+    
     # Set constants
     M = 0.5  # mass, g/cm^2
     B = 100  # damping, dyne s/cm^3
@@ -59,7 +61,7 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
     logger.info(
         f"Initial parameters: alpha = {alpha:.4f}   beta = {beta:.4f}   delta = {delta:.4f}"
     )
-    logger.info("-" * 110)
+    logger.debug("-" * 110)
 
     # Optimize
     best_results: Dict[str, List[float]] = {  # store best results over iterations
@@ -83,7 +85,9 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
         # logger.info("Solving vocal fold displacement model")
         K = B ** 2 / (beta ** 2 * M)
         Ps = (alpha * x0 * np.sqrt(M * K)) / tau
-        time_scaling = np.sqrt(K / float(M))  # t -> s
+        #time_scaling = np.sqrt(K / float(M))  # t -> s
+        time_scaling = np.sqrt(K / float(M))*100  # t -> s
+
         x_scaling = np.sqrt(eta)
         # logger.debug(
         #     f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2    "
@@ -180,10 +184,11 @@ def vocal_fold_estimator(wav_file_path, wav_samples,sample_rate,glottal_flow, lo
         beta_k = beta
         delta_k = delta
         Rk = np.sqrt(np.sum(R ** 2))
-        logger.info(
+        print(
             f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
             f"beta = {beta_k:.4f}   delta = {delta_k:.4f}"
         )
+        
         if Rk < Rk_best:  # has improvement
             # Record best
             iteration_best = iteration
