@@ -136,7 +136,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, section = 1):
+def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, section = 1):
     """
     Inputs: wav_samples: audio wavfile
             glottal_flow: numpy array of glottal flow from IAIF
