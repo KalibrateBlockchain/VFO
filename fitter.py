@@ -226,10 +226,9 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, se
 
         if len(sol) > len(wav_samples):
             sol = sol[:-1]
-        assert len(sol) == len(
-            wav_samples
-            if mode_of_processing==1:
-                print("Inconsistent length: ODE sol;",len(sol),len(wav_samples))
+        ##assert len(sol) == len(wav_samples)
+          ##  if mode_of_processing==1:
+            ##    print("Inconsistent length: ODE sol;",len(sol),len(wav_samples))
 
         # Calculate glottal flow
         try:
