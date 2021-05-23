@@ -28,7 +28,7 @@ from solvers.ode_solvers.ode_solver import ode_solver
 from solvers.optimization import optim_adapt_step, optim_grad_step
 from math import floor, ceil
 import logging
-np.random.seed(123)
+#np.random.seed(123)
 
 
 
