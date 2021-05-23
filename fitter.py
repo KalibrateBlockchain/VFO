@@ -136,13 +136,15 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience = 5, section = 1):
+def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, section = 1):
     """
     Inputs: wav_samples: audio wavfile
             glottal_flow: numpy array of glottal flow from IAIF
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
+    mode_of_processing=1 # for console
+    #mode_of_processing=2 # for production   
     
     # Set constants
     M = 0.5  # mass, g/cm^2
@@ -175,10 +177,8 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
     num_tsteps = len(wav_samples)  # total number of time steps
     T = len(wav_samples) / float(sample_rate)  # total time, s
-    logger.info(
-        f"Initial parameters: alpha = {alpha:.4f}   beta = {beta:.4f}   delta = {delta:.4f}"
-    )
-    logger.debug("-" * 110)
+    if mode_of_processing==1:
+        print("Initial parameters: alpha = ",alpha," beta = ",beta," delta = ",delta)
 
     # Optimize
     best_results: Dict[str, List[float]] = {  # store best results over iterations
@@ -228,7 +228,8 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience
             sol = sol[:-1]
         assert len(sol) == len(
             wav_samples
-        ), f"Inconsistent length: ODE sol ({len(sol):d}) / wav samples ({len(wav_samples):d})"
+            if mode_of_processing==1:
+                print("Inconsistent length: ODE sol;",len(sol),len(wav_samples))
 
         # Calculate glottal flow
         try:
@@ -282,8 +283,8 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience
                 verbosity=50,
             )
         except Exception as e:
-            logger.error(f"Exception: {e}")
-            logger.warning("Skip")
+            if mode_of_processing==1:
+                print("exception: ",e)
             break
 
         # Compute adjoint lagrange multipliers
@@ -301,10 +302,9 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience
         beta_k = beta
         delta_k = delta
         Rk = np.sqrt(np.sum(R ** 2))
-        print(
-            f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
-            f"beta = {beta_k:.4f}   delta = {delta_k:.4f}"
-        )
+        if mode_of_processing==1:
+            print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
+            f"beta = {beta_k:.4f}   delta = {delta_k:.4f}")
         
         if Rk < Rk_best:  # has improvement
             # Record best
@@ -396,10 +396,9 @@ def vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,logger, t_patience
     best_results["delta"].append(delta_best)
     best_results["sol"].append(sol_best)
     best_results["u0"].append(u0_best)
-    logger.info(
-        f"BEST@{iteration_best:d}: L2 Residual = {Rk_best:.4f} | alpha = {alpha_best:.4f}   "
-        f"beta = {beta_best:.4f}   delta = {delta_best:.4f}"
-    )
+    if mode_of_processing==1:
+            Print(f"BEST@{iteration_best:d}: L2 Residual = {Rk_best:.4f} | alpha = {alpha_best:.4f}   "
+            f"beta = {beta_best:.4f}   delta = {delta_best:.4f}")
     # logger.info("*" * 110)
     # logger.info("*" * 110)
 
