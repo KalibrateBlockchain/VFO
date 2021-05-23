@@ -396,7 +396,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
     best_results["sol"].append(sol_best)
     best_results["u0"].append(u0_best)
     if mode_of_processing==1:
-            Print(f"BEST@{iteration_best:d}: L2 Residual = {Rk_best:.4f} | alpha = {alpha_best:.4f}   "
+            print(f"BEST@{iteration_best:d}: L2 Residual = {Rk_best:.4f} | alpha = {alpha_best:.4f}   "
             f"beta = {beta_best:.4f}   delta = {delta_best:.4f}")
     # logger.info("*" * 110)
     # logger.info("*" * 110)
