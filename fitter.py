@@ -202,8 +202,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
         # logger.info("Solving vocal fold displacement model")
         K = B ** 2 / (beta ** 2 * M)
         Ps = (alpha * x0 * np.sqrt(M * K)) / tau
-        #time_scaling = np.sqrt(K / float(M))  # t -> s
-        time_scaling = np.sqrt(K / float(M))*100  # t -> s
+        time_scaling = np.sqrt(K / float(M))  # t -> s
 
         x_scaling = np.sqrt(eta)
         # logger.debug(
