@@ -408,5 +408,26 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
         'timestamp': datetime.datetime.now().isoformat(),
     }
 
+       # NOTE: If you want to plot glottal flow, estimatted glottal flow and residual
+    plt.figure()
+    fig, ax = plt.subplots(figsize=(20,3)) 
+    plt.plot(sol_best[:, 0], glottal_flow, "k.-")
+    plt.plot(sol_best[:, 0], u0_best, "b.-")
+    plt.plot(sol_best[:, 0], R_best, "r.-")
+    plt.xlabel("t")
+    plt.legend(["glottal flow", "estimated glottal flow", "residual"])
+    plt.figure()
+    plt.subplot(121)
+    plt.plot(sol_best[:, 1], sol_best[:, 3], "b.-")
+    plt.xlabel(r"$\xi_r$")
+    plt.ylabel(r"$\xi_l$")
+    plt.subplot(122)
+    plt.plot(sol_best[:, 2], sol_best[:, 4], "b.-")
+    plt.xlabel(r"$\dot{\xi}_r$")
+    plt.ylabel(r"$\dot{\xi}_l$")
+    plt.tight_layout()
+    plt.show()
+
+    
 
     return res
