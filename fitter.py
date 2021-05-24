@@ -169,7 +169,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
     # plt.show()
 
     # Set model initial conditions
-    delta = np.random.random()  # asymmetry parameter
+    #delta = np.random.random()  # asymmetry parameter
+    delta = 0.5  # asymmetry parameter
     alpha = 0.6 * delta  # if > 0.5 delta, stable-like oscillator
     beta = 0.2
 
