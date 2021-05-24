@@ -246,13 +246,13 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
         R = u0 - glottal_flow
 
         # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
-        # plt.figure()
-        # plt.plot(sol[:, 0], glottal_flow, "k.-")
-        # plt.plot(sol[:, 0], u0, "b.-")
-        # plt.plot(sol[:, 0], R, "r.-")
-        # plt.xlabel("t")
-        # plt.legend(["glottal flow", "estimated glottal flow", "residual"])
-        # plt.show()
+        plt.figure()
+        plt.plot(sol[:, 0], glottal_flow, "k.-")
+        plt.plot(sol[:, 0], u0, "b.-")
+        #plt.plot(sol[:, 0], R, "r.-")
+        plt.xlabel("t")
+        plt.legend(["glottal flow", "estimated glottal flow", "residual"])
+        plt.show()
 
         # Solve adjoint model
         # logger.info("Solving adjoint model")
@@ -414,7 +414,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
     fig, ax = plt.subplots(figsize=(20,3)) 
     plt.plot(sol_best[:, 0], glottal_flow, "k.-")
     plt.plot(sol_best[:, 0], u0_best, "b.-")
-    plt.plot(sol_best[:, 0], R_best, "r.-")
+    #plt.plot(sol_best[:, 0], R_best, "r.-")
     plt.xlabel("t")
     plt.legend(["glottal flow", "estimated glottal flow", "residual"])
     plt.figure()
