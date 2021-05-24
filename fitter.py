@@ -136,7 +136,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, section = 1):
+def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5, section = 1, verbose):
     """
     Inputs: wav_samples: audio wavfile
             glottal_flow: numpy array of glottal flow from IAIF
@@ -244,15 +244,15 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,t_patience = 5
 
         # Estimation residual
         R = u0 - glottal_flow
-
-        # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
-        plt.figure()
-        plt.plot(sol[:, 0], glottal_flow, "k.-")
-        plt.plot(sol[:, 0], u0, "b.-")
-        #plt.plot(sol[:, 0], R, "r.-")
-        plt.xlabel("t")
-        plt.legend(["glottal flow", "estimated glottal flow", "residual"])
-        plt.show()
+        if verbose==1:
+            # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
+            plt.figure()
+            plt.plot(sol[:, 0], glottal_flow, "k.-")
+            plt.plot(sol[:, 0], u0, "b.-")
+            #plt.plot(sol[:, 0], R, "r.-")
+            plt.xlabel("t")
+            plt.legend(["glottal flow", "estimated glottal flow", "residual"])
+            plt.show()
 
         # Solve adjoint model
         # logger.info("Solving adjoint model")
