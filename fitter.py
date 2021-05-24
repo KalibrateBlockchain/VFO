@@ -206,10 +206,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,verbose,t_pati
         time_scaling = np.sqrt(K / float(M))  # t -> s
 
         x_scaling = np.sqrt(eta)
-        # logger.debug(
-        #     f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2    "
-        #     f"time_scaling = {time_scaling:.4f}"
-        # )
+        if verbose==1:
+            print(f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2   time_scaling = {time_scaling:.4f}")
 
         vdp_params = [alpha, beta, delta]
         sol = ode_solver(
@@ -246,6 +244,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,verbose,t_pati
         R = u0 - glottal_flow
         if verbose==1:
             # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
+            print("len(R)="len(R)," len(u0)=",len(u0)," len(glottal_flow)=",len(glottal_flow))
             plt.figure()
             fig, ax = plt.subplots(figsize=(20,3)) 
             plt.plot(sol[:, 0], glottal_flow, "k.-")
