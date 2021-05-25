@@ -39,7 +39,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
-  if mode_of_processing==1:
+  if verbose==1:
     print (startPeriod)
 
   rwt_audio_all=rwt_audio[period[startPeriod]: ]
@@ -221,7 +221,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha,beta,del
         if len(sol) > len(wav_samples):
             sol = sol[:-1]
         ##assert len(sol) == len(wav_samples)
-          ##  if mode_of_processing==1:
+          ##  if verbose==1:
             ##    print("Inconsistent length: ODE sol;",len(sol),len(wav_samples))
 
         # Calculate glottal flow
@@ -278,7 +278,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha,beta,del
                 verbosity=50,
             )
         except Exception as e:
-            if mode_of_processing==1:
+            if verbose==1:
                 print("exception: ",e)
             break
 
@@ -391,7 +391,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha,beta,del
     best_results["delta"].append(delta_best)
     best_results["sol"].append(sol_best)
     best_results["u0"].append(u0_best)
-    if mode_of_processing==1:
+    if verbose==1:
             print(f"BEST@{iteration_best:d}: L2 Residual = {Rk_best:.4f} | alpha = {alpha_best:.4f}   "
             f"beta = {beta_best:.4f}   delta = {delta_best:.4f}")
     
