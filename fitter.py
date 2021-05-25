@@ -35,8 +35,7 @@ import logging
 
 def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):  
   
-  mode_of_processing=1 # for console
-  #mode_of_processing=2 # for production
+  verbose=1 # for console
   
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
@@ -50,7 +49,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   gl_audio_all = gl_audio[period[startPeriod]:]
   gl_audio_analyze = gl_audio[period[startPeriod]: period[(startPeriod + numberOfPeriods)]]
   
-  if mode_of_processing==1:
+  if verbose==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio_analyze
     plt.title('Glottal Audio Analyze')
     ax.plot(gl_audio_analyze)
@@ -102,7 +101,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   x,u,y,v = sol
   
   # Plot data to fit vs model evaluation
-  if mode_of_processing==1:
+  if verbose==1:
     fig, ax = plt.subplots(figsize=(20,3)) 
     plt.title('Fitting')
     ax.plot(u0[:len(gl_audio_analyze)], 'b-', label='model fit')
@@ -117,7 +116,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
     
   t1 = time.process_time() # Here end counting time
   
-  if mode_of_processing==1:
+  if verbose==1:
     print("Elapsed time to solve: ",(t1-t0) / 60,"minutes")
     print("r1 = ", r1," r2 = ",r2)
   
@@ -136,15 +135,13 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,verbose,t_patience = 5, section = 1):
+def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha,beta,delta,verbose,t_patience = 5, section = 1):
     """
     Inputs: wav_samples: audio wavfile
             glottal_flow: numpy array of glottal flow from IAIF
     returns: dictionary best_results:
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
-    mode_of_processing=1 # for console
-    #mode_of_processing=2 # for production   
     
     # Set constants
     M = 0.5  # mass, g/cm^2
@@ -170,15 +167,14 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,verbose,t_pati
 
     # Set model initial conditions
     #delta = np.random.random()  # asymmetry parameter
-    delta = 0.5  # asymmetry parameter
-    alpha = 0.6 * delta  # if > 0.5 delta, stable-like oscillator
-    beta = 0.2
+    #alpha = 0.6 * delta  # if > 0.5 delta, stable-like oscillator
+    #beta = 0.2
 
     vdp_init_t = 0.0
     vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
     num_tsteps = len(wav_samples)  # total number of time steps
     T = len(wav_samples) / float(sample_rate)  # total time, s
-    if mode_of_processing==1:
+    if verbose==1:
         print("Initial parameters: alpha = ",alpha," beta = ",beta," delta = ",delta)
 
     # Optimize
@@ -304,7 +300,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,verbose,t_pati
         #Rs=R[int(len(R)/2) :]
         #Rk = np.sum(np.absolute(Rs))        
         
-        if mode_of_processing==1:
+        if verbose==1:
             print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
             f"beta = {beta_k:.4f}   delta = {delta_k:.4f}")
         
