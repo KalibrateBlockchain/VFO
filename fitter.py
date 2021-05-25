@@ -298,9 +298,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         alpha_k = alpha
         beta_k = beta
         delta_k = delta
-        Rk = np.sqrt(np.sum(R ** 2))
-        #Rs=R[int(len(R)/2) :]
-        #Rk = np.sum(np.absolute(Rs))        
+        #Rk = np.sqrt(np.sum(R ** 2))
+        Rs=R[int(len(R)/5) :]
+        Rk = np.sum(np.absolute(Rs))        
         
         if verbose==1:
             print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
