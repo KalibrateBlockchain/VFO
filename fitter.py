@@ -403,7 +403,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         'alpha':float(alpha_best),
         'beta':float(beta_best),
         'delta':float(delta_best),
-        'Rk':float(Rk),
+        'Rk':float(Rk_best),
         'eigenreal1':float(r1),
         'eigenreal2':float(r2),
         'eigensign':int(np.sign(r1*r2)),
