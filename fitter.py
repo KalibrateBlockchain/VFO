@@ -252,6 +252,47 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.xlabel("t")
             plt.legend(["glottal flow", "estimated glottal flow", "residual"])
             plt.show()
+            
+            Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
+            Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
+
+            
+            # Plot states
+            plt.figure()
+            plt.subplot(121)
+            plt.plot(Sl[:, 0], Sl[:, 1], color)
+            #plt.ylabel('Left Vocal Fold', fontsize=10)
+            #plt.figtext(0.02, 0.01, "α = {:.3f} , β = {:.3f} , δ = {:.3f}, ρ = {:.3f}".format(res['alpha'], res['beta'], res['delta'], res['Rk']), wrap=True, horizontalalignment='left')
+
+            #Plot hide it all
+            ax = plt.gca()
+            ax.axes.xaxis.set_visible(True)
+            ax.axes.yaxis.set_visible(True)
+            ax.axes.xaxis.set_ticks([])
+            ax.axes.yaxis.set_ticks([])
+            ax.axes.xaxis.set_ticklabels([])
+            ax.axes.yaxis.set_ticklabels([])
+            ax.set_facecolor('none')
+            plt.grid(False)
+
+            plt.subplot(122)
+            plt.plot(Sr[:, 0], Sr[:, 1], color)
+            #plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
+            #plt.ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
+            #plt.figtext(0.6, 0.01, eigen)
+            #plt.figtext(0.59, 0.01, res['timestamp'])
+    
+            #Plot hide it all
+            ax = plt.gca()
+            ax.axes.xaxis.set_visible(True)
+            ax.axes.yaxis.set_visible(True)
+            ax.axes.xaxis.set_ticks([])
+            ax.axes.yaxis.set_ticks([])
+            ax.axes.xaxis.set_ticklabels([])
+            ax.axes.yaxis.set_ticklabels([])
+            ax.set_facecolor('none')
+            plt.grid(False)
+            plt.tight_layout()
 
         # Solve adjoint model
         # logger.info("Solving adjoint model")
