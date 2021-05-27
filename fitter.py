@@ -135,7 +135,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta=0.2,delta=0.5,verbose=-1,t_patience = 5, section = 1):
+def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta=0.2,delta=0.5,verbose=-1,t_patience = 5,f_delta=0, section = 1):
     i_delta=delta
     """
     Inputs: wav_samples: audio wavfile
@@ -196,7 +196,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
     if_adjust = 0
 
     while patience < t_patience: # this was 400 default
-        delta=i_delta
+        if f_delta==1:
+            delta=i_delta
         # Solve vocal fold displacement model
         # logger.info("Solving vocal fold displacement model")
         K = B ** 2 / (beta ** 2 * M)
