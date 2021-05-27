@@ -252,7 +252,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
               i=i+1
               d=d+np.abs(u0[i-1]-u0[i])
             
-            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d," d/len(u0) = ",d/len(u0)
+            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d," d/len(u0) = ",d/len(u0))
             
                
             plt.figure()
