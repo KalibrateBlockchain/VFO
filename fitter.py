@@ -268,7 +268,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             # vdp_params = [0.64, 0.32, 1.6]  # torus
             # vdp_params = [0.7, 0.32, 1.6]  # two cycle
             # vdp_params = [0.8, 0.32, 1.6]  # one cycle
-            vdp_params_1 = [results['alpha'][-1], results['beta'][-1], results['delta'][-1]]
+            vdp_params_1 = alpha, beta, delta
 
             # Solve vocal fold displacement model
             sol_1 = ode_solver(
