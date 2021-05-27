@@ -284,17 +284,17 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             )
 
             # Get steady state
-            Sr = sol[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
-            Sl = sol[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
+            Sr_1 = sol[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
+            Sl_1 = sol[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
 
             # Plot states
             plt.figure()
             plt.subplot(121)
-            plt.plot(Sr[:, 0], Sr[:, 1], 'b.-')
+            plt.plot(Sr_1[:, 0], Sr_1[:, 1], 'b.-')
             plt.xlabel(r'$\xi_r$')
             plt.ylabel(r'$\dot{\xi}_r$')
             plt.subplot(122)
-            plt.plot(Sl[:, 0], Sl[:, 1], 'b.-')
+            plt.plot(Sl_1[:, 0], Sl_1[:, 1], 'b.-')
             plt.xlabel(r'$\xi_l$')
             plt.ylabel(r'$\dot{\xi}_l$')
             #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
