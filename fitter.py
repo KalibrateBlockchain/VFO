@@ -256,47 +256,52 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.xlabel("t")
             plt.legend(["glottal flow", "estimated glottal flow", "residual"])
             plt.show()
+           
+        
             
-            Sr = sol[250:500, [1, 2]]  # right states, (xr, dxr)
-            Sl = sol[250:500, [3, 4]]  # left states, (xl, dxl)
+            t_max_1 = 500
 
-            
+            vdp_init_t_1 = 0.0
+            vdp_init_state_1 = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
+
+            # vdp_params = [0.64, 0.32, 0.16]  # normal
+            # vdp_params = [0.64, 0.32, 1.6]  # torus
+            # vdp_params = [0.7, 0.32, 1.6]  # two cycle
+            # vdp_params = [0.8, 0.32, 1.6]  # one cycle
+            vdp_params_1 = [results['alpha'][-1], results['beta'][-1], results['delta'][-1]]
+
+            # Solve vocal fold displacement model
+            sol_1 = ode_solver(
+                vdp_coupled,
+                vdp_jacobian,
+                vdp_params_1,
+                vdp_init_state_1,
+                vdp_init_t_1,
+                solver="lsoda",
+                ixpr=0,
+                dt=1,
+                tmax=t_max_1,
+            )
+
+            # Get steady state
+            Sr = sol[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
+            Sl = sol[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
+
             # Plot states
             plt.figure()
             plt.subplot(121)
-            plt.plot(Sl[:, 0], Sl[:, 1], 'k.-')
-            #plt.ylabel('Left Vocal Fold', fontsize=10)
-            #plt.figtext(0.02, 0.01, "α = {:.3f} , β = {:.3f} , δ = {:.3f}, ρ = {:.3f}".format(res['alpha'], res['beta'], res['delta'], res['Rk']), wrap=True, horizontalalignment='left')
-
-            #Plot hide it all
-            ax = plt.gca()
-            ax.axes.xaxis.set_visible(True)
-            ax.axes.yaxis.set_visible(True)
-            ax.axes.xaxis.set_ticks([])
-            ax.axes.yaxis.set_ticks([])
-            ax.axes.xaxis.set_ticklabels([])
-            ax.axes.yaxis.set_ticklabels([])
-            ax.set_facecolor('none')
-            plt.grid(False)
-
+            plt.plot(Sr[:, 0], Sr[:, 1], 'b.-')
+            plt.xlabel(r'$\xi_r$')
+            plt.ylabel(r'$\dot{\xi}_r$')
             plt.subplot(122)
-            plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
-            #plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
-            #plt.ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
-            #plt.figtext(0.6, 0.01, eigen)
-            #plt.figtext(0.59, 0.01, res['timestamp'])
-    
-            #Plot hide it all
-            ax = plt.gca()
-            ax.axes.xaxis.set_visible(True)
-            ax.axes.yaxis.set_visible(True)
-            ax.axes.xaxis.set_ticks([])
-            ax.axes.yaxis.set_ticks([])
-            ax.axes.xaxis.set_ticklabels([])
-            ax.axes.yaxis.set_ticklabels([])
-            ax.set_facecolor('none')
-            plt.grid(False)
+            plt.plot(Sl[:, 0], Sl[:, 1], 'b.-')
+            plt.xlabel(r'$\xi_l$')
+            plt.ylabel(r'$\dot{\xi}_l$')
+            #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
             plt.tight_layout()
+            plt.show()
+            
+            
 
         # Solve adjoint model
         # logger.info("Solving adjoint model")
