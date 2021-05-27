@@ -257,8 +257,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.legend(["glottal flow", "estimated glottal flow", "residual"])
             plt.show()
             
-            Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
-            Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
+            Sr = sol[int(len(sol) / 2) :, [1, 2]]  # right states, (xr, dxr)
+            Sl = sol[int(len(sol) / 2) :, [3, 4]]  # left states, (xl, dxl)
 
             
             # Plot states
