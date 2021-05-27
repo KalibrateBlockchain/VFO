@@ -244,6 +244,12 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         if verbose==1:
             # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
             print("len(R)=",len(R)," len(u0)=",len(u0)," len(glottal_flow)=",len(glottal_flow))
+            
+            sum(u0[:int(len(u0)/4)]
+                
+             Rs=R[int(len(R)/5) :]
+        Rk = np.sqrt(np.sum(Rs ** 2))     
+                
             plt.figure()
             fig, ax = plt.subplots(figsize=(20,3)) 
             plt.plot(sol[:, 0], glottal_flow, "k.-")
