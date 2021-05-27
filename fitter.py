@@ -246,7 +246,14 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             print("len(R)=",len(R)," len(u0)=",len(u0)," len(glottal_flow)=",len(glottal_flow))
             f_sum=np.sum(np.abs(u0[int(len(R)/5):]))
             l_sum=np.sum(np.abs(u0[:int(len(R)/5)]))
-            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum)
+            i=1
+            d=0
+            while i<(len(u0)-1):
+              i=i+1
+              d=d+np.abs(u0[i-1]-u0[i])
+            
+            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d," d/len(u0) = ",d/len(u0)
+            
                
             plt.figure()
             fig, ax = plt.subplots(figsize=(20,3)) 
@@ -290,7 +297,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             # Plot states
             plt.figure()
             plt.subplot(121)
-            plt.plot(Sr_1[:, 0], Sr_1[:, 1], 'b.-')
+            plt.plot(Sr_1[:, 0], Sr_1[:, 1], 'k.-')
             #plt.xlabel(r'$\xi_r$')
             #plt.ylabel(r'$\dot{\xi}_r$')
             plt.tight_layout()
@@ -305,7 +312,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.grid(False)
 
             plt.subplot(122)
-            plt.plot(Sl_1[:, 0], Sl_1[:, 1], 'b.-')
+            plt.plot(Sl_1[:, 0], Sl_1[:, 1], 'k.-')
             #plt.xlabel(r'$\xi_l$')
             #plt.ylabel(r'$\dot{\xi}_l$')
             #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
