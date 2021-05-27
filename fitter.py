@@ -264,7 +264,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             # Plot states
             plt.figure()
             plt.subplot(121)
-            plt.plot(Sl[:, 0], Sl[:, 1], color)
+            plt.plot(Sl[:, 0], Sl[:, 1], 'k.-')
             #plt.ylabel('Left Vocal Fold', fontsize=10)
             #plt.figtext(0.02, 0.01, "α = {:.3f} , β = {:.3f} , δ = {:.3f}, ρ = {:.3f}".format(res['alpha'], res['beta'], res['delta'], res['Rk']), wrap=True, horizontalalignment='left')
 
@@ -280,7 +280,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.grid(False)
 
             plt.subplot(122)
-            plt.plot(Sr[:, 0], Sr[:, 1], color)
+            plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
             #plt.plot(Sr[:, 0], Sr[:, 1], 'k.-')
             #plt.ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
             #plt.figtext(0.6, 0.01, eigen)
