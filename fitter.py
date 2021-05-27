@@ -206,6 +206,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
 
         x_scaling = np.sqrt(eta)
         if verbose==1:
+            print("")
+            print("")
+            print("New solution:")
             print(f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2   time_scaling = {time_scaling:.4f}")
 
         vdp_params = [alpha, beta, delta]
@@ -385,7 +388,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
             f"beta = {beta_k:.4f}   delta = {delta_k:.4f}")
         
-        if Rk < Rk_best:  # has improvement
+        if (Rk < Rk_best) and ((d/len(u0))>(1/20050)):  # has improvement
             # Record best
             iteration_best = iteration
             R_best = R
