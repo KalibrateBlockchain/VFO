@@ -205,12 +205,6 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         time_scaling = np.sqrt(K / float(M))  # t -> s
 
         x_scaling = np.sqrt(eta)
-        if verbose==1:
-            print("")
-            print("")
-            print("New solution:")
-            print(f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2   time_scaling = {time_scaling:.4f}")
-
         vdp_params = [alpha, beta, delta]
         sol = ode_solver(
             vdp_coupled,
@@ -244,18 +238,76 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
 
         # Estimation residual
         R = u0 - glottal_flow
+
+        # Solve adjoint model
+        # logger.info("Solving adjoint model")
+
+        residual, jac = adjoint_model(alpha, beta, delta, X, dX, R, sample_rate, 0, T)
+        M_T = [0.0, 0.0, 0.0, 0.0]  # initial states of adjoint model at T
+        dM_T = [0.0, -R[-1], 0.0, -R[-1]]  # initial ddL = ddE = -R(T)
+        try:
+            adjoint_sol = dae_solver(
+                residual,
+                M_T,
+                dM_T,
+                T,
+                tfinal=0,  # simulate (tfinal-->t0)s backward
+                backward=True,
+                ncp=len(wav_samples),
+                solver="IDA",
+                algvar=[0, 1, 0, 1],
+                suppress_alg=True,
+                atol=1e-6,
+                rtol=1e-6,
+                usejac=True,
+                jac=jac,
+                usesens=False,
+                display_progress=True,
+                report_continuously=False,  # NOTE: report_continuously should be False
+                verbosity=50,
+            )
+        except Exception as e:
+            if verbose==1:
+                print("exception: ",e)
+            break
+
+        # Compute adjoint lagrange multipliers
+        L = adjoint_sol[1][:, 0][::-1]  # reverse time 0 --> T
+        E = adjoint_sol[1][:, 2][::-1]
+        assert (len(L) == num_tsteps) and (len(E) == num_tsteps), "Size mismatch"
+        L = L / np.linalg.norm(L)  # normalize
+        E = E / np.linalg.norm(E)
+
+        # Update parameters
+        # logger.info("Updating parameters")
+
+        # Record parameters @ current step
+        alpha_k = alpha
+        beta_k = beta
+        delta_k = delta
+        #Rk = np.sqrt(np.sum(R ** 2))
+        Rs=R[int(len(R)/5) :]
+        Rk = np.sqrt(np.sum(Rs ** 2))        
+        
         if verbose==1:
-            # NOTE: If you want to plot glottal flow by IAIF vs estimated glottal flow
+            print("")
+            print("")
+            print("New solution:")
+
+            print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
+            f"beta = {beta_k:.4f}   delta = {delta_k:.4f}")
+            
+            print(f"stiffness K = {K:.4f} dyne/cm^3    subglottal Ps = {Ps:.4f} dyne/cm^2   time_scaling = {time_scaling:.4f}")
             print("len(R)=",len(R)," len(u0)=",len(u0)," len(glottal_flow)=",len(glottal_flow))
             f_sum=np.sum(np.abs(u0[int(len(R)/5):]))
             l_sum=np.sum(np.abs(u0[:int(len(R)/5)]))
-            i=1
-            d=0
-            while i<(len(u0)-1):
-              i=i+1
-              d=d+np.abs(u0[i-1]-u0[i])
+            i_1=1
+            d_1=0
+            while i_1<(len(u0)-1):
+              i_1=i_1+1
+              d_1=d_1+np.abs(u0[i_1-1]-u0[i_1])
             
-            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d," d/len(u0) = ",d/len(u0))
+            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d_1," d/len(u0) = ",d_1/len(u0))
             
                
             plt.figure()
@@ -265,9 +317,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             #plt.plot(sol[:, 0], R, "r.-")
             plt.xlabel("t")
             plt.legend(["glottal flow", "estimated glottal flow", "residual"])
-            plt.show()
-           
-        
+            plt.show()     
             
             t_max_1 = 500
 
@@ -278,7 +328,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             # vdp_params = [0.64, 0.32, 1.6]  # torus
             # vdp_params = [0.7, 0.32, 1.6]  # two cycle
             # vdp_params = [0.8, 0.32, 1.6]  # one cycle
-            vdp_params_1 = alpha, beta, delta
+            vdp_params_1 = alpha_k, beta_k, delta_k
 
             # Solve vocal fold displacement model
             sol_1 = ode_solver(
@@ -334,59 +384,6 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
 
             
 
-        # Solve adjoint model
-        # logger.info("Solving adjoint model")
-
-        residual, jac = adjoint_model(alpha, beta, delta, X, dX, R, sample_rate, 0, T)
-        M_T = [0.0, 0.0, 0.0, 0.0]  # initial states of adjoint model at T
-        dM_T = [0.0, -R[-1], 0.0, -R[-1]]  # initial ddL = ddE = -R(T)
-        try:
-            adjoint_sol = dae_solver(
-                residual,
-                M_T,
-                dM_T,
-                T,
-                tfinal=0,  # simulate (tfinal-->t0)s backward
-                backward=True,
-                ncp=len(wav_samples),
-                solver="IDA",
-                algvar=[0, 1, 0, 1],
-                suppress_alg=True,
-                atol=1e-6,
-                rtol=1e-6,
-                usejac=True,
-                jac=jac,
-                usesens=False,
-                display_progress=True,
-                report_continuously=False,  # NOTE: report_continuously should be False
-                verbosity=50,
-            )
-        except Exception as e:
-            if verbose==1:
-                print("exception: ",e)
-            break
-
-        # Compute adjoint lagrange multipliers
-        L = adjoint_sol[1][:, 0][::-1]  # reverse time 0 --> T
-        E = adjoint_sol[1][:, 2][::-1]
-        assert (len(L) == num_tsteps) and (len(E) == num_tsteps), "Size mismatch"
-        L = L / np.linalg.norm(L)  # normalize
-        E = E / np.linalg.norm(E)
-
-        # Update parameters
-        # logger.info("Updating parameters")
-
-        # Record parameters @ current step
-        alpha_k = alpha
-        beta_k = beta
-        delta_k = delta
-        #Rk = np.sqrt(np.sum(R ** 2))
-        Rs=R[int(len(R)/5) :]
-        Rk = np.sqrt(np.sum(Rs ** 2))        
-        
-        if verbose==1:
-            print(f"[{patience:d}:{iteration:d}] L2 Residual = {Rk:.4f} | alpha = {alpha_k:.4f}   "
-            f"beta = {beta_k:.4f}   delta = {delta_k:.4f}")
         
         if (Rk < Rk_best) and ((d/len(u0))>(1/20050)):  # has improvement
             #if (Rk < Rk_best):  # has improvement
