@@ -350,7 +350,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             # Plot states
             plt.figure()
             plt.subplot(121)
-            plt.plot(Sr_1[:, 0], Sr_1[:, 1], 'k.-')
+            plt.plot(Sl_1[:, 0], Sl_1[:, 1], 'k.-')
             #plt.xlabel(r'$\xi_r$')
             #plt.ylabel(r'$\dot{\xi}_r$')
             plt.tight_layout()
@@ -365,10 +365,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             plt.grid(False)
 
             plt.subplot(122)
-            plt.plot(Sl_1[:, 0], Sl_1[:, 1], 'k.-')
+            plt.plot(Sr_1[:, 0], Sr_1[:, 1], 'k.-')
             #plt.xlabel(r'$\xi_l$')
             #plt.ylabel(r'$\dot{\xi}_l$')
-            #plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(results["Rk"][-1], results["alpha"][-1], results["beta"][-1], results["delta"][-1]), wrap=True, horizontalalignment='center', fontsize=12)
+            plt.figtext(0.5, 0.01, "Residual = {:.3f} , alpha = {:.3f} , beta = {:.3f} , delta = {:.3f}".format(Rk, alpha_k, beta_k, delta_k), wrap=True, horizontalalignment='center', fontsize=12)
             plt.tight_layout()
             ax = plt.gca()
             ax.axes.xaxis.set_visible(True)
