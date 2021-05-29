@@ -287,7 +287,13 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         delta_k = delta
         #Rk = np.sqrt(np.sum(R ** 2))
         Rs=R[int(len(R)/5) :]
-        Rk = np.sqrt(np.sum(Rs ** 2))        
+        Rk = np.sqrt(np.sum(Rs ** 2))  
+        i_1=1
+        d_1=0
+        while i_1<(len(u0)-1):
+            i_1=i_1+1
+            d_1=d_1+np.abs(u0[i_1-1]-u0[i_1])
+  
         
         if verbose==1:
             print("")
@@ -301,12 +307,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             print("len(R)=",len(R)," len(u0)=",len(u0)," len(glottal_flow)=",len(glottal_flow))
             f_sum=np.sum(np.abs(u0[int(len(R)/5):]))
             l_sum=np.sum(np.abs(u0[:int(len(R)/5)]))
-            i_1=1
-            d_1=0
-            while i_1<(len(u0)-1):
-              i_1=i_1+1
-              d_1=d_1+np.abs(u0[i_1-1]-u0[i_1])
-            
+          
             print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d_1," d/len(u0) = ",d_1/len(u0))
             
                
@@ -344,8 +345,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             )
 
             # Get steady state
-            Sr_1 = sol[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
-            Sl_1 = sol[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
+            Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
+            Sl_1 = sol_1[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
 
             # Plot states
             plt.figure()
@@ -385,7 +386,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             
 
         
-        if (Rk < Rk_best) and ((d/len(u0))>(1/20050)):  # has improvement
+        if (Rk < Rk_best) and ((d_1/len(u0))>(1/20050)):  # has improvement
             #if (Rk < Rk_best):  # has improvement
             # Record best
             iteration_best = iteration
