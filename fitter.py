@@ -135,7 +135,7 @@ def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):
   
   return res
 
-def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta=0.2,delta=0.5,verbose=-1,t_patience = 5,f_delta=0, section = 1):
+def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta=0.2,delta=0.5,verbose=-1,t_patience = 5,f_delta=0, cut_off=0.0, section = 1):
     i_delta=delta
     """
     Inputs: wav_samples: audio wavfile
@@ -386,7 +386,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             
 
         
-        if (Rk < Rk_best) and ((d_1/len(u0))>(.5/20050)):  # has improvement
+        if (Rk < Rk_best) and ((d_1/len(u0))>(cut_off/20050)):  # has improvement
             #if (Rk < Rk_best):  # has improvement
             # Record best
             iteration_best = iteration
