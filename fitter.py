@@ -152,6 +152,14 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
     tau = 1e-3  # time delay for surface wave to travel half glottal height, ms
     c = 5000  # air particle velocity, cm/s
     eta = 1.0  # nonlinear factor for energy dissipation at large amplitude
+    
+    #compute d_1; distance of glottal_flow signal
+    i_1=1
+    g_1=0
+    while i_1<(len(glottal_flow)-1):
+        i_1=i_1+1
+        g_1=g_1+np.abs(glottal_flow[i_1-1]-glottal_flow[i_1])
+ 
 
     """CISCO
     sample_rate, wav_samples = wavfile.read(wav_file_path)
@@ -288,6 +296,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         #Rk = np.sqrt(np.sum(R ** 2))
         Rs=R[int(len(R)/5) :]
         Rk = np.sqrt(np.sum(Rs ** 2))  
+        
+        #compute d_1; distance of u0 signal
         i_1=1
         d_1=0
         while i_1<(len(u0)-1):
@@ -308,7 +318,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             f_sum=np.sum(np.abs(u0[int(len(R)/5):]))
             l_sum=np.sum(np.abs(u0[:int(len(R)/5)]))
           
-            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d_1," d/len(u0) = ",d_1/len(u0))
+            print("f_sum = ",f_sum," l_sum = ",l_sum, "factor: = ",l_sum/f_sum,"d = ",d_1," d/len(u0) = ",d_1/len(u0)," g =",g_1," d/g =",d_1/g_1)
             
                
             plt.figure()
