@@ -175,12 +175,14 @@ ax.spines['left'].set_visible(False)
 
 
 run=1
-verbose=1
-res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=1,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
+verbose=2
+if mode_of_processing==1:
+  verbose=1
+res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
 
-res2=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=1,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
-res3=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=1,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
-#res4=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=1,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
+res2=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
+res3=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
+#res4=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
 
 if res2['Rk']<res['Rk']:
   res=res2
