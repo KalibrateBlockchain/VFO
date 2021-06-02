@@ -396,7 +396,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             
 
         
-        if (Rk < Rk_best) and ((d_1/len(u0))>(cut_off/20050)):  # has improvement
+        if (Rk < Rk_best) and ((d_1/g_1)>(cut_off)) and ((d_1/g_1)<(1/cut_off)):  # has improvement
             #if (Rk < Rk_best):  # has improvement
             # Record best
             iteration_best = iteration
