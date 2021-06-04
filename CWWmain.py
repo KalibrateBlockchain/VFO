@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import IPython 
 from IPython import embed 
-%matplotlib inline 
+
 import random 
 
 import os, sys
@@ -22,13 +22,12 @@ import grp
 import librosa as lr
 import librosa.display
 import soundfile as sf
-import noisereduce as nr
 import time
 import datetime
 import json
 import matplotlib.pyplot as plt
 from math import pi, sin, sqrt, pow, floor, ceil
-from pypevoc.speech.glottal import iaif_ola, lpcc2pole
+from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 import pylab
 from PIL import Image
 from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
@@ -38,10 +37,16 @@ from solvers.ode_solvers.ode_solver import ode_solver
 from fitter import vfo_fitter, vfo_vocal_fold_estimator
 from vocal_fold_estimator import vocal_fold_estimator
 
-def CWWmain(fname, mode_of_processing)
+#x=1
+#if x==1:
+def CWWmain(fname, mode_of_processing):
   #mode_of_processing=1 # for console
-  #mode_of_processing=2 # for production
+  mode_of_processing=2 # for production
+  fname = "/VFO/Sample_files/ArchiveSamples/76A16E11-2409-404D-7EA7-EDD8875561F7/VowelA210421083129.caf"
 
+
+  t0 = time.process_time() # Here start counting time
+  
   if mode_of_processing==1:
 
     #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-aaaaa.wav"
@@ -59,8 +64,8 @@ def CWWmain(fname, mode_of_processing)
     #fname = "/VFO/Sample_files/PhoneAppSampleFiles/TWW-CaaaT-5-20.wav"
     #fname = "/VFO/Sample_files/PhoneAppSampleFiles/VowelA210520161309.caf"
     #fname = "/VFO/Sample_files/ArchiveSamples/DE8083E0-A109-FD70-2300-6BF1AEF3B3E7/VowelA210521113006.caf"
-    fname = "/VFO/Sample_files/ArchiveSamples/76A16E11-2409-404D-7EA7-EDD8875561F7/VowelA210421181533.caf"
-    #fname = "/VFO/Sample_files/ArchiveSamples/76A16E11-2409-404D-7EA7-EDD8875561F7/VowelA210421083129.caf"
+    #fname = "/VFO/Sample_files/ArchiveSamples/76A16E11-2409-404D-7EA7-EDD8875561F7/VowelA210421181533.caf"
+    fname = "/VFO/Sample_files/ArchiveSamples/76A16E11-2409-404D-7EA7-EDD8875561F7/VowelA210421083129.caf"
 
 
     print(fname)
@@ -72,9 +77,7 @@ def CWWmain(fname, mode_of_processing)
   if mode_of_processing==2:
     working_filepath=""
     audio_file=""
-    fname=(working_filepath+os.path.splitext(args.audio_file)[0] + "-sample.WAV")
-    CantAnalyze=plt.imread(working_filepath+os.path+"CantAnalyze.png")
-    TooNoisy=plt.imread(working_filepath+os.path+"TooNoisy.png")
+    fname=fname
 
 
   f_audio, s_rate = sf.read(fname, always_2d=True)
@@ -90,7 +93,9 @@ def CWWmain(fname, mode_of_processing)
 
   rw_audio=file_audio
   # filter glotal signal
-  gl_audio, dg, vt, gf = iaif_ola(rw_audio, Fs=s_rate , tract_order=2 * int(np.round(s_rate / 2000)) + 4 , glottal_order=2 * int(np.round(s_rate / 4000)))
+  g_order=2 * int(np.round(s_rate / 4000))
+  t_order=2 * int(np.round(s_rate / 2000))+4
+  gl_audio, dg, vt, gf = iaif_ola(rw_audio, Fs=s_rate , tract_order=t_order , glottal_order=g_order)
 
 
   # Here's the noise clip extracted from the raw_audio beginning at 0.3 seconds, and ending at 1.0 seconds
@@ -132,7 +137,7 @@ def CWWmain(fname, mode_of_processing)
     end=index
     index=index+1
 
-  start=start+int(s_rate*.3)
+  start=start+int(s_rate*.75)
   end=start+int(s_rate*1.0)
 
   rwt_audio = rw_audio[start:end]
@@ -180,16 +185,52 @@ def CWWmain(fname, mode_of_processing)
   if mode_of_processing==1:
     verbose=1
     
-  res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
-  res2=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
-  res3=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose,t_patience = 200, f_delta=0, cut_off=0.25, section = -1)
-  
-  if res2['Rk']<res['Rk']:
+  cutoff=0.4
+  res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res2=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res3=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res4=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res5=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res6=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res7=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res8=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res9=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res10=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res11=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  res12=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate,alpha=0.30,beta=0.20,delta=0.50,verbose=verbose,t_patience = 50, f_delta=0, cut_off=cutoff, section = -1)
+  if res2['Rk']<res['Rk'] and (res2['distanceRatio']>cutoff):
     res=res2
     run=2
-  if res3['Rk']<res['Rk']:
+  if res3['Rk']<res['Rk'] and (res3['distanceRatio']>cutoff):
     res=res3
     run=3
+  if res4['Rk']<res['Rk'] and (res4['distanceRatio']>cutoff):
+    res=res4
+    run=4
+  if res5['Rk']<res['Rk'] and (res5['distanceRatio']>cutoff):
+    res=res5
+    run=5
+  if res6['Rk']<res['Rk'] and (res6['distanceRatio']>cutoff):
+    res=res6
+    run=6
+  if res7['Rk']<res['Rk'] and (res7['distanceRatio']>cutoff):
+    res=res7
+    run=7
+  if res8['Rk']<res['Rk'] and (res8['distanceRatio']>cutoff):
+    res=res8
+    run=8
+  if res9['Rk']<res['Rk'] and (res9['distanceRatio']>cutoff):
+    res=res9
+    run=9
+  if res10['Rk']<res['Rk'] and (res10['distanceRatio']>cutoff):
+    res=res10
+    run=10
+  if res11['Rk']<res['Rk'] and (res11['distanceRatio']>cutoff):
+    res=res11
+    run=11
+  if res12['Rk']<res['Rk'] and (res12['distanceRatio']>cutoff):
+    res=res12
+    run=12
   
   res.update({'noise':mean_noise})
 
@@ -205,7 +246,7 @@ def CWWmain(fname, mode_of_processing)
     vdp_params,
     vdp_init_state,
     vdp_init_t,
-    olver="lsoda",
+    solver="lsoda",
     ixpr=0,
     dt=1,
     tmax=t_max,
@@ -250,15 +291,15 @@ def CWWmain(fname, mode_of_processing)
   ax4.set_xlabel("{}".format(res['timestamp']), wrap=True, fontsize=10)
   ax5.axes.yaxis.set_ticks([])
   ax5.axes.xaxis.set_ticks([])
-  ax5.plot(rw_audio, color, linewidth=0.05,markersize=0.05)
-  ax5.axvspan(start, end, facecolor='r')
-  ax5.set_xlabel("Audio Sample Submission",fontsize=10)
+  t1 = time.process_time() # Here end counting time
+  ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
+  ax5.axvspan(start, end, facecolor='#91CC29')
+  ax5.set_xlabel("Audio Sample Analyzed \nProcessing time = {:.2f}".format(((t1-t0)/60)),fontsize=10)
   ax5.xaxis.label.set_color(color)
-  plt.savefig("resplot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
+  plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
 
-
-  results_file = open("results.json", "w")
+  results_file = open(os.path.splitext(fname)[0]+"-results.json", "w")
   json.dump(res, results_file)
   results_file.close()
-  
+
   return
