@@ -219,7 +219,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
 
         x_scaling = np.sqrt(eta)
         vdp_params = [alpha, beta, delta]
-        ode_t=dae_t-time.process_time() #cacluate ode time
+        ode_t=ode_t-time.process_time() #cacluate ode time
         sol = ode_solver(
             vdp_coupled,
             vdp_jacobian,
@@ -231,7 +231,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             dt=(time_scaling / float(sample_rate)),  # dt -> ds
             tmax=(time_scaling * T),
         )
-        ode_t=dae_t+time.process_time() #cacluate ode time
+        ode_t=ode_t+time.process_time() #cacluate ode time
 
         if len(sol) > len(wav_samples):
             sol = sol[:-1]
@@ -351,7 +351,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             vdp_params_1 = alpha_k, beta_k, delta_k
 
             # Solve vocal fold displacement model
-            ode_t=dae_t-time.process_time() #cacluate dae time
+            ode_t=ode_t-time.process_time() #cacluate ode time
             sol_1 = ode_solver(
                 vdp_coupled,
                 vdp_jacobian,
@@ -363,7 +363,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
                 dt=1,
                 tmax=t_max_1,
             )
-            ode_t=dae_t+time.process_time() #cacluate dae time
+            ode_t=ode_t+time.process_time() #cacluate ode time
 
             # Get steady state
             Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
