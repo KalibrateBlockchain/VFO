@@ -35,7 +35,7 @@ import logging
 
 def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):  
   
-  verbose=1 # for console
+  verbose=0 # for console
   
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
