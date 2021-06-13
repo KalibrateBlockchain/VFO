@@ -47,7 +47,7 @@ from PIL import Image
 #from solvers.optimization import optim_adapt_step, optim_grad_step
 from math import floor, ceil
 import logging
-import ray
+#import ray
 from typing import Callable, List
 from scipy.integrate import ode
 #from assimulo.problem import Implicit_Problem
@@ -587,9 +587,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     alpha=0.30
     beta=0.20
     delta=0.50
-    verbose=-1
+    verbose=1
     t_patience = 100
-    f_delta=0,
+    f_delta=0.0
     cut_off=0.4
     section = -1
     i_delta=delta
@@ -600,7 +600,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     ["iteration", "R", "Rk", "alpha", "beta", "delta", "sol", "u0"]
     """
 
-    delta = np.random.random()  # asymmetry parameter
+    
+    #delta = np.random.random()  # asymmetry parameter
+    delta=0.65
     alpha = 0.6 * delta  # if > 0.5 delta, stable-like oscillator
     beta = 0.2
     
@@ -767,8 +769,11 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         delta_k = delta
         Rk = np.sqrt(np.sum(R ** 2))
         #Rs=Rr[int(len(Rr)/5) :]
-        #Rk = np.sqrt(np.sum(Rs ** 2))  
-        #Rk = np.sqrt(np.sum(R[int(len(R)*.2):] ** 2))
+        #Rk = np.sqrt(np.sum(Rs ** 2)) 
+        #R_s=librosa.resample(R, sample_rate, 8000) 
+        Rk_s = np.sqrt(np.sum(R[int(len(R)/3):] ** 2))
+        if sample_rate>40000:
+          Rk_s=Rk_s-.1
         #Rk = np.sqrt((np.sum(R[int(len(R)*.2):] ** 2))/len(R)*22050)
         
         #compute d_1; distance of u0 signal
@@ -834,6 +839,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
             Sl_1 = sol_1[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
 
+
+
             # Plot states
             plt.figure()
             plt.subplot(121)
@@ -869,10 +876,22 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             
             plt.show()
 
+            plt.figure()
+            plt.subplot(121)
+            plt.plot(sol_1[int(t_max_1/2):, 1], sol_1[int(t_max_1/2):, 3], "b.-")
+            plt.xlabel(r"$\xi_r$")
+            plt.ylabel(r"$\xi_l$")
+            plt.subplot(122)
+            plt.plot(sol_1[int(t_max_1/2):, 2], sol_1[int(t_max_1/2):, 4], "b.-")
+            plt.xlabel(r"$\dot{\xi}_r$")
+            plt.ylabel(r"$\dot{\xi}_l$")
+            plt.tight_layout()
+            plt.show()
+
 
             #if ((Rk < Rk_best) and ((d_1/g_1)>(cut_off)) and ((d_1/g_1)<(1/cut_off))):  # has improvement
         if verbose>-1:
-          print(Rk,Rk_best,d_1,g_1,iteration)            #if ((Rk < Rk_best) and ((d_1/g_1)>cut_off)) or (iteration==0):  # has improvement
+          print(Rk,Rk_s,Rk_best,d_1,g_1,iteration)            #if ((Rk < Rk_best) and ((d_1/g_1)>cut_off)) or (iteration==0):  # has improvement
         #if (Rk < Rk_best) and ((d_1/g_1)>cut_off):  # has improvement
             #if ((Rk < Rk_best) and ((d_1/g_1)>cut_off)) or (iteration==0):  # has improvement
         if (Rk < Rk_best):  # has improvement
@@ -881,6 +900,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             iteration_best = iteration
             R_best = R
             Rk_best = Rk
+            Rk_s_best = Rk_s
             alpha_best = alpha_k
             beta_best = beta_k
             delta_best = delta_k
@@ -957,7 +977,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         
     best_results["iteration"].append(iteration_best)
     best_results["R"].append(R_best)
-    best_results["Rk"].append(Rk_best)
+    best_results["Rk"].append(Rk_s_best)
     best_results["alpha"].append(alpha_best)
     best_results["beta"].append(beta_best)
     best_results["delta"].append(delta_best)
@@ -994,7 +1014,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         'alpha':float(alpha_best),
         'beta':float(beta_best),
         'delta':float(delta_best),
-        'Rk':float(Rk_best),
+        'Rk':float(Rk_s_best),
         'distanceRatio':float(d_1_best/g_1),
         'eigenreal1':float(r1),
         'eigenreal2':float(r2),
@@ -1021,16 +1041,21 @@ def CWWmain(fname, mode_of_processing):
 
  
   #fname = "/content/drive/MyDrive/VowelA210608235543.3gp"
+  #fname="/content/drive/MyDrive/VowelAh210612202106.3gp"
   #fname="/content/drive/MyDrive/VowelA210608235543_01.wav"
-  fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TLW-BAAAT.wav"
+  #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TLW-BAAAT.wav"
   #fname = "/content/drive/MyDrive/VowelAh210607062818.caf"
-  #fname="/content/drive/MyDrive/VowelAh210606092937.caf"
+  #f#name="/content/drive/MyDrive/VowelAh210606092937.caf"
   #fname="/content/drive/MyDrive/VowelAh210604045101.caf"
   #fname="/content/drive/MyDrive/VowelA210608235543_02.wav"
   #fname="/content/drive/MyDrive/VowelA210608235543_021.wav"
   #fname="/content/drive/MyDrive/VowelAh210604045101_01_01.wav"
   #fname="/content/drive/MyDrive/VowelA210608235543_0102.wav"
   #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TomFlowers.wav"
+  #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-aaaaa.wav"
+  #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TomFlowers-2.wav"
+  #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
+  #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
   t_0 = time.process_time() # Here start counting time
   et_0=time.time()
   
@@ -1067,6 +1092,12 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210611043933.3gp"
     #fname="/content/drive/MyDrive/Record-1.wav"
     #fname="/content/drive/MyDrive/VowelAh210606092937.caf"
+    #fname="/content/drive/MyDrive/VowelAh210611070047.caf"
+    #fname="/content/drive/MyDrive/VowelAh210612202106.3gp"
+    #fname="/content/drive/MyDrive/VowelAh210612205435.3gp"
+    #fname="/content/drive/MyDrive/TomFlowers8000.wav"
+    #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
+    #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
 
     print(fname)
     from google.colab import drive
@@ -1083,21 +1114,44 @@ def CWWmain(fname, mode_of_processing):
     #os.system("ffmpeg -i "+f3gpname+" -y -ss 1 -t 1 -ab 256k -ar 16k "+fname) #ffmpeg to wav
 
 
-  f_audio, s_rate = sf.read(fname, always_2d=True)
-  f_audio=f_audio[:, 0]
+  f, s_rate = sf.read(fname, always_2d=True)
+  f_audio=f[:, 0]
+  file_rate=s_rate
+
+  if mode_of_processing==1:
+    fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
+    plt.title('raw file Audio')
+    ax.plot(f_audio)
+  
 
   f_rate=s_rate
   begin=10000
   length=5000
-  #f_audio = f_audio / (np.linalg.norm(f_audio)/1)
+  f_audio = f_audio / (np.linalg.norm(f_audio)/1)
+
+  g_order=2 * int(np.round(s_rate / 4000))
+  t_order=2 * int(np.round(s_rate / 2000))+4
+  gl_audio, dg, vt, gf = iaif_ola(f_audio[30000:38000], Fs=s_rate , tract_order=t_order , glottal_order=g_order)
+  
+  if mode_of_processing==1:
+    fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
+    plt.title('Glottal Audio')
+    ax.plot(gl_audio[30000:38000])
+
+
+
+
+
+
   
 
-  file_audio=librosa.resample(f_audio, s_rate, 22050)
+  
+  #file_audio=librosa.resample(f_audio, s_rate, 8000)
+  #s_rate=8000
   file_audio=f_audio
-  s_rate=22050
 
   if mode_of_processing==1:
-    print('file_audio'," sample rate=",s_rate," len(file_audio)=",len(file_audio)," type=",file_audio.dtype)
+    print('file_audio'," sample rate=",s_rate," len(file_audio)=",len(file_audio)," type=",file_audio.dtype," file_rate",file_rate)
     fig, ax = plt.subplots(figsize=(20,3)) 
     plt.title('file_audio')
     ax.plot(file_audio[int(begin*(s_rate/22050)):int((begin+length)*(s_rate/22050))])
@@ -1127,7 +1181,7 @@ def CWWmain(fname, mode_of_processing):
     plt.title('Abs Audio')
     ax.plot(abs_audio)
 
-  chunk = int(500)
+  chunk = int(s_rate*.02)
   avg_audio=[]
   r_sum=sum(abs_audio[:(chunk-1)])
   for index, value in enumerate(abs_audio[: len(abs_audio)-chunk]):
@@ -1364,4 +1418,6 @@ def CWWmain(fname, mode_of_processing):
   return
   
 if __name__ == '__main__':
-    CWWmain("",2)
+    CWWmain("",1)
+
+
