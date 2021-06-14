@@ -670,6 +670,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     Rk_best = 1e16
     patience = 0  # number of patient iterations of no improvement before stopping optimization
     if_adjust = 0
+    
 
     while patience < t_patience: # this was 400 default
         if verbose>-1:
@@ -1118,6 +1119,8 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
     #fname="/content/drive/MyDrive/VowelAh210613210338.caf"
     #fname="/content/drive/MyDrive/VowelAh210614192911.3gp"
+    #fname="/content/drive/MyDrive/VowelAh210614210013.3gp"
+    #fname="/content/drive/MyDrive/VowelAh210614142537.mp4"
 
     print(fname)
     from google.colab import drive
@@ -1132,10 +1135,12 @@ def CWWmain(fname, mode_of_processing):
     fname=os.path.splitext(fname)[0]+".wav"
     os.system("ffmpeg -i "+f3gpname+" "+fname) #ffmpeg to wav
     #os.system("ffmpeg -i "+f3gpname+" -y -ss 1 -t 1 -ab 256k -ar 16k "+fname) #ffmpeg to wav
+  
+  f_audio,s_rate=librosa.load(fname, sr=None, mono=True)
 
-
-  f, s_rate = sf.read(fname, always_2d=True)
-  f_audio=f[:, 0]
+  #f, s_rate = sf.read(fname, always_2d=True)
+  #f_audio=f[:, 0]
+  
   file_rate=s_rate
 
   if mode_of_processing==1:
