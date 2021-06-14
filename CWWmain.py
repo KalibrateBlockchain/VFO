@@ -773,7 +773,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         #R_s=librosa.resample(R, sample_rate, 8000) 
         Rk_s = np.sqrt(np.sum(R[int(len(R)/3):] ** 2))
         if sample_rate>40000:
-          Rk_s=Rk_s-.1
+          Rk_s=Rk_s-.15
         #Rk = np.sqrt((np.sum(R[int(len(R)*.2):] ** 2))/len(R)*22050)
         
         #compute d_1; distance of u0 signal
@@ -839,6 +839,24 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
             Sl_1 = sol_1[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
 
+            i=0
+
+            min_distance=100
+            max_distance=0
+            while i<len(Sr_1):
+              distance=sqrt((Sr_1[i,0]*Sr_1[i,0])+(Sr_1[i,1]*Sr_1[i,1]))
+              if distance<min_distance:
+                min_distance=distance
+              if distance>max_distance:
+                max_distance=distance
+              distance=sqrt((Sl_1[i,0]*Sl_1[i,0])+(Sl_1[i,1]*Sl_1[i,1]))
+              if distance<min_distance:
+                min_distance=distance
+              if distance>max_distance:
+                max_distance=distance
+              i=i+1
+          
+            print("distance =",min_distance, max_distance)
 
 
             # Plot states
@@ -1098,6 +1116,8 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/TomFlowers8000.wav"
     #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
     #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
+    #fname="/content/drive/MyDrive/VowelAh210613210338.caf"
+    #fname="/content/drive/MyDrive/VowelAh210614192911.3gp"
 
     print(fname)
     from google.colab import drive
@@ -1289,85 +1309,57 @@ def CWWmain(fname, mode_of_processing):
   res11=ray.get(res11_OBJ)
   res12=ray.get(res12_OBJ)
   """
-  res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  """
-  res2=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res3=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res4=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res5=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res6=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res7=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res8=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res9=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res10=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res11=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  res12=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
-  
 
-  if res2['Rk']<res['Rk'] and (res2['distanceRatio']>cutoff):
-    res=res2
-    run=2
- 
-  if res3['Rk']<res['Rk'] and (res3['distanceRatio']>cutoff):
-    res=res3
-    run=3
-  if res4['Rk']<res['Rk'] and (res4['distanceRatio']>cutoff):
-    res=res4
-    run=4
-  if res5['Rk']<res['Rk'] and (res5['distanceRatio']>cutoff):
-    res=res5
-    run=5
+  run=0
+  while run<2:
+    run=run+1
+    res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
+    t_max = 500
+    vdp_init_t = 0.0
+    vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
+    vdp_params = [res['alpha'], res['beta'], res['delta']]
 
-  if res6['Rk']<res['Rk'] and (res6['distanceRatio']>cutoff):
-    res=res6
-    run=6
-  if res7['Rk']<res['Rk'] and (res7['distanceRatio']>cutoff):
-    res=res7
-    run=7
-  if res8['Rk']<res['Rk'] and (res8['distanceRatio']>cutoff):
-    res=res8
-    run=8
-  if res9['Rk']<res['Rk'] and (res9['distanceRatio']>cutoff):
-    res=res9
-    run=9
-  if res10['Rk']<res['Rk'] and (res10['distanceRatio']>cutoff):
-    res=res10
-    run=10
-  if res11['Rk']<res['Rk'] and (res11['distanceRatio']>cutoff):
-    res=res11
-    run=11
-  if res12['Rk']<res['Rk'] and (res12['distanceRatio']>cutoff):
-    res=res12
-    run=12
-  """
-  
+    # Solve vocal fold displacement model
+    sol = ode_solver(
+      vdp_coupled,
+      vdp_jacobian,
+      vdp_params,
+      vdp_init_state,
+      vdp_init_t,
+      solver="lsoda",
+      ixpr=0,
+      dt=1,
+      tmax=t_max,
+      )
+
+    # Get steady state
+    Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
+    Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
+    min_distance=100
+    max_distance=0
+    i=0
+    while i<len(Sr):
+      distance=sqrt((Sr[i,0]*Sr[i,0])+(Sr[i,1]*Sr[i,1]))
+      if distance<min_distance:
+        min_distance=distance
+      if distance>max_distance:
+        max_distance=distance
+      distance=sqrt((Sl[i,0]*Sl[i,0])+(Sl[i,1]*Sl[i,1]))
+      if distance<min_distance:
+        min_distance=distance
+      if distance>max_distance:
+        max_distance=distance
+      i=i+1
+
+    if min_distance>1 and res['Rk']<1:
+      run=4
+    
   t_1 = time.process_time() # Here end counting time
   et_1=time.time()
   res.update({'processingTime':((et_1-et_0)/60)})
   res.update({'cpuTime':(t_1-t_0)})
   res.update({'noise':mean_noise})
 
-  t_max = 500
-  vdp_init_t = 0.0
-  vdp_init_state = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
-  vdp_params = [res['alpha'], res['beta'], res['delta']]
-
-  # Solve vocal fold displacement model
-  sol = ode_solver(
-    vdp_coupled,
-    vdp_jacobian,
-    vdp_params,
-    vdp_init_state,
-    vdp_init_t,
-    solver="lsoda",
-    ixpr=0,
-    dt=1,
-    tmax=t_max,
-    )
-
-  # Get steady state
-  Sr = sol[int(t_max / 2) :, [1, 2]]  # right states, (xr, dxr)
-  Sl = sol[int(t_max / 2) :, [3, 4]]  # left states, (xl, dxl)
 
   if mode_of_processing==1 or (mode_of_processing==2):
     print("Run number: ",run,"Residual: ",res['Rk'])
@@ -1377,6 +1369,8 @@ def CWWmain(fname, mode_of_processing):
   color='w'
   if mode_of_processing==1:
     color='k'
+
+
 
   #plt.subplots_adjust(hspace = -1.0)
   fig = plt.figure(figsize=(8, 18))
@@ -1418,6 +1412,6 @@ def CWWmain(fname, mode_of_processing):
   return
   
 if __name__ == '__main__':
-    CWWmain("",1)
+    CWWmain("",2)
 
 
