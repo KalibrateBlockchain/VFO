@@ -659,6 +659,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         "iteration": [],  # optimize iter
         "R": [],  # estimation residual @ k
         "Rk": [],  # estimation residual w.r.t L2 norm @ k
+        "Rk_s":[],
+        "min_distance": [],
         "alpha": [],
         "beta": [],
         "delta": [],
@@ -784,6 +786,47 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             i_1=i_1+1
             d_1=d_1+np.abs(u0[i_1-1]-u0[i_1])
   
+        t_max_1 = 500
+
+        vdp_init_t_1 = 0.0
+        vdp_init_state_1 = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
+        vdp_params_1 = alpha_k, beta_k, delta_k
+
+        # Solve vocal fold displacement model
+        ode_t=ode_t-time.process_time() #cacluate ode time
+        sol_1 = ode_solver(
+            vdp_coupled,
+            vdp_jacobian,
+            vdp_params_1,
+            vdp_init_state_1,
+            vdp_init_t_1,
+            solver="lsoda",
+            ixpr=0,
+            dt=1,
+            tmax=t_max_1,
+        )
+        ode_t=ode_t+time.process_time() #cacluate ode time
+
+        # Get steady state
+        Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
+        Sl_1 = sol_1[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
+
+        i=0
+        min_distance=100
+        max_distance=0
+        while i<len(Sr_1):
+          distance=sqrt((Sr_1[i,0]*Sr_1[i,0])+(Sr_1[i,1]*Sr_1[i,1]))
+          if distance<min_distance:
+            min_distance=distance
+          if distance>max_distance:
+            max_distance=distance
+          distance=sqrt((Sl_1[i,0]*Sl_1[i,0])+(Sl_1[i,1]*Sl_1[i,1]))
+          if distance<min_distance:
+            min_distance=distance
+          if distance>max_distance:
+            max_distance=distance
+          i=i+1
+          
         
         if verbose==1:
             print("")
@@ -810,53 +853,6 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             plt.legend(["glottal flow", "estimated glottal flow", "residual"])
             plt.show()     
             
-            t_max_1 = 500
-
-            vdp_init_t_1 = 0.0
-            vdp_init_state_1 = [0.0, 0.1, 0.0, 0.1]  # (xr, dxr, xl, dxl), xl=xr=0
-
-            # vdp_params = [0.64, 0.32, 0.16]  # normal
-            # vdp_params = [0.64, 0.32, 1.6]  # torus
-            # vdp_params = [0.7, 0.32, 1.6]  # two cycle
-            # vdp_params = [0.8, 0.32, 1.6]  # one cycle
-            vdp_params_1 = alpha_k, beta_k, delta_k
-
-            # Solve vocal fold displacement model
-            ode_t=ode_t-time.process_time() #cacluate ode time
-            sol_1 = ode_solver(
-                vdp_coupled,
-                vdp_jacobian,
-                vdp_params_1,
-                vdp_init_state_1,
-                vdp_init_t_1,
-                solver="lsoda",
-                ixpr=0,
-                dt=1,
-                tmax=t_max_1,
-            )
-            ode_t=ode_t+time.process_time() #cacluate ode time
-
-            # Get steady state
-            Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
-            Sl_1 = sol_1[int(t_max_1 / 2) :, [3, 4]]  # left states, (xl, dxl)
-
-            i=0
-
-            min_distance=100
-            max_distance=0
-            while i<len(Sr_1):
-              distance=sqrt((Sr_1[i,0]*Sr_1[i,0])+(Sr_1[i,1]*Sr_1[i,1]))
-              if distance<min_distance:
-                min_distance=distance
-              if distance>max_distance:
-                max_distance=distance
-              distance=sqrt((Sl_1[i,0]*Sl_1[i,0])+(Sl_1[i,1]*Sl_1[i,1]))
-              if distance<min_distance:
-                min_distance=distance
-              if distance>max_distance:
-                max_distance=distance
-              i=i+1
-          
             print("distance =",min_distance, max_distance)
 
 
@@ -920,6 +916,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             R_best = R
             Rk_best = Rk
             Rk_s_best = Rk_s
+            min_distance_best = min_distance
             alpha_best = alpha_k
             beta_best = beta_k
             delta_best = delta_k
@@ -996,7 +993,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         
     best_results["iteration"].append(iteration_best)
     best_results["R"].append(R_best)
-    best_results["Rk"].append(Rk_s_best)
+    best_results["Rk"].append(Rk_best)
+    best_results["Rk_s"].append(Rk_s_best)
+    best_results["min_distance"].append(min_distance_best)
     best_results["alpha"].append(alpha_best)
     best_results["beta"].append(beta_best)
     best_results["delta"].append(delta_best)
@@ -1033,7 +1032,9 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         'alpha':float(alpha_best),
         'beta':float(beta_best),
         'delta':float(delta_best),
-        'Rk':float(Rk_s_best),
+        'Rk':float(Rk_best),
+        'Rk_s':float(Rk_s_best),
+        'min_distance':float(min_distance_best),
         'distanceRatio':float(d_1_best/g_1),
         'eigenreal1':float(r1),
         'eigenreal2':float(r2),
@@ -1121,6 +1122,7 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210614192911.3gp"
     #fname="/content/drive/MyDrive/VowelAh210614210013.3gp"
     #fname="/content/drive/MyDrive/VowelAh210614142537.mp4"
+    #fname="/content/drive/MyDrive/VowelAh210615062339.mp4"
 
     print(fname)
     from google.colab import drive
@@ -1356,14 +1358,14 @@ def CWWmain(fname, mode_of_processing):
         max_distance=distance
       i=i+1
 
-    if min_distance>1 and res['Rk']<1:
+    if min_distance>1 and res['Rk_s']<1:
       run=4
     
   t_1 = time.process_time() # Here end counting time
   et_1=time.time()
-  res.update({'processingTime':((et_1-et_0)/60)})
-  res.update({'cpuTime':(t_1-t_0)})
-  res.update({'noise':mean_noise})
+  res.update({'processingTime':float((et_1-et_0)/60)})
+  res.update({'cpuTime':float(t_1-t_0)})
+  res.update({'noise':float(mean_noise)})
 
 
   if mode_of_processing==1 or (mode_of_processing==2):
@@ -1394,7 +1396,7 @@ def CWWmain(fname, mode_of_processing):
   ax3.yaxis.label.set_color(color)
   ax3.xaxis.label.set_color(color)
   ax3.axes.xaxis.set_ticks([])
-  ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f}, Fit 2 = {:.2f}, Noise = {:.2f}".format(res['alpha'], res['beta'], res['delta'],res['Rk'],res['distanceRatio'],res['noise']*10000), wrap=True, fontsize=10)
+  ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f}, Fit 2 = {:.2f}, Noise = {:.2f}".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance'],res['noise']*10000), wrap=True, fontsize=10)
   ax4.plot(Sr[:, 0], Sr[:, 1], color)
   ax4.axes.yaxis.set_ticks([])
   ax4.set_ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
@@ -1418,5 +1420,6 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
+
 
 
