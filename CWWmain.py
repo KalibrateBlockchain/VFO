@@ -30,6 +30,8 @@ from math import pi, sin, sqrt, pow, floor, ceil
 from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 import pylab
 from PIL import Image
+from termcolor import colored
+
 #from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
 #from utils_odes import foo_main, sys_eigenvals, plot_solution
 #from models.vocal_fold.vocal_fold_model_displacement import vdp_coupled, vdp_jacobian
@@ -670,6 +672,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     iteration = 0
     Rk = 1e16
     Rk_best = 1e16
+    Rk_s_s_best=100
     patience = 0  # number of patient iterations of no improvement before stopping optimization
     if_adjust = 0
     
@@ -826,7 +829,21 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
           if distance>max_distance:
             max_distance=distance
           i=i+1
-          
+
+        if min_distance>=1 and Rk_s<=1: #We have a solution that meets threshold criteria
+          if Rk_s<Rk_s_s_best: #and it is better than prior ones
+            Rk_s_s_best=Rk_s
+            alpha_s_best=alpha
+            beta_s_best=beta
+            delta_s_best=delta
+            min_distance_s_best=min_distance
+            sol_s_best=sol
+            u0_s_best=u0
+            iteration_s_best=iteration
+            R_s_best=R
+
+
+
         
         if verbose==1:
             print("")
@@ -990,7 +1007,20 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             # )
             if_adjust = 0
 
-        
+
+    if Rk_s_s_best<100:
+      R_best=R_s_best
+      Rk_best=Rk_s_best
+      Rk_s_best=Rk_s_s_best
+      min_distance_best=min_distance_s_best
+      alpha_best=alpha_s_best
+      beta_best=beta_s_best
+      delta_best=delta_s_best
+      sol_best=sol_s_best
+      u0_best=u0_s_best
+      iteration_best=iteration_s_best
+
+
     best_results["iteration"].append(iteration_best)
     best_results["R"].append(R_best)
     best_results["Rk"].append(Rk_best)
@@ -1115,7 +1145,7 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210611070047.caf"
     #fname="/content/drive/MyDrive/VowelAh210612202106.3gp"
     #fname="/content/drive/MyDrive/VowelAh210612205435.3gp"
-    #fname="/content/drive/MyDrive/TomFlowers8000.wav"
+    ##fname="/content/drive/MyDrive/TomFlowers8000.wav"
     #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
     #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
     #fname="/content/drive/MyDrive/VowelAh210613210338.caf"
@@ -1123,6 +1153,9 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210614210013.3gp"
     #fname="/content/drive/MyDrive/VowelAh210614142537.mp4"
     #fname="/content/drive/MyDrive/VowelAh210615062339.mp4"
+    #fname="/content/drive/MyDrive/VowelA210615220705.caf"
+    #fname="/content/drive/MyDrive/VowelA210615221459.caf"
+    #fname="/content/drive/MyDrive/VowelA210615225723.caf"
 
     print(fname)
     from google.colab import drive
@@ -1149,7 +1182,6 @@ def CWWmain(fname, mode_of_processing):
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
     plt.title('raw file Audio')
     ax.plot(f_audio)
-  
 
   f_rate=s_rate
   begin=10000
@@ -1164,17 +1196,6 @@ def CWWmain(fname, mode_of_processing):
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
     plt.title('Glottal Audio')
     ax.plot(gl_audio[30000:38000])
-
-
-
-
-
-
-  
-
-  
-  #file_audio=librosa.resample(f_audio, s_rate, 8000)
-  #s_rate=8000
   file_audio=f_audio
 
   if mode_of_processing==1:
@@ -1283,7 +1304,6 @@ def CWWmain(fname, mode_of_processing):
     plt.show()
 
 
-  run=1
   """
   gl_audio_OBJ=ray.put(gl_audio)
   rwt_audio_OBJ=ray.put(rwt_audio)
@@ -1316,6 +1336,8 @@ def CWWmain(fname, mode_of_processing):
   res11=ray.get(res11_OBJ)
   res12=ray.get(res12_OBJ)
   """
+
+
 
   run=0
   while run<2:
@@ -1360,7 +1382,8 @@ def CWWmain(fname, mode_of_processing):
 
     if min_distance>1 and res['Rk_s']<1:
       run=4
-    
+
+
   t_1 = time.process_time() # Here end counting time
   et_1=time.time()
   res.update({'processingTime':float((et_1-et_0)/60)})
@@ -1376,6 +1399,19 @@ def CWWmain(fname, mode_of_processing):
   color='w'
   if mode_of_processing==1:
     color='k'
+
+  """
+  a1=0.345
+  c1=color
+  c2='green'
+  #print("α = "+colored(str(a1),c))
+  #" , δ = "+res['delta']+"\nFit 1 = "+res['Rk_s']," , Fit 2 = ",res['min_distance']," Noise = ",res['noise']*10000
+  #s="α = "+colored(f"{alpha:.2f}",c)+", β = "+colored(f"{beta:.3f}",c)+", δ = "+colored(f"{delta:.3f}",c)+"\nFit 1 = "+colored(f"{delta:.3f}",c)+", Fit 2 = "+colored(f"{delta:.3f}",c)+", Noise = "+colored(f"{delta*10000:.3f}",c)
+  a1=0.34
+  s="α = "+colored(f"{res['alpha']:.2f}",c1)+", β = "+colored(f"{res['beta']:.3f}",c1)+", δ = "+colored(f"{res['delta']:.3f}",c1)+"\nFit 1 = "+colored(f"{a1:.3f}",c2)+", Fit 2 = "+colored(f"{a1:.3f}",c2)+", Noise = "+colored(f"{a1*10000:.3f}",c1)
+ 
+  print(s)
+  """
 
 
 
@@ -1397,6 +1433,7 @@ def CWWmain(fname, mode_of_processing):
   ax3.xaxis.label.set_color(color)
   ax3.axes.xaxis.set_ticks([])
   ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f}, Fit 2 = {:.2f}, Noise = {:.2f}".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance'],res['noise']*10000), wrap=True, fontsize=10)
+  #ax3.set_xlabel(s, wrap=True, fontsize=10)  
   ax4.plot(Sr[:, 0], Sr[:, 1], color)
   ax4.axes.yaxis.set_ticks([])
   ax4.set_ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
@@ -1420,6 +1457,8 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
+
+
 
 
 
