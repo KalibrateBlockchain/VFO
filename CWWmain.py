@@ -589,7 +589,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     alpha=0.30
     beta=0.20
     delta=0.50
-    verbose=1
+    verbose=-2
     t_patience = 100
     f_delta=0.0
     cut_off=0.4
