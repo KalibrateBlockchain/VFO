@@ -30,6 +30,7 @@ from math import pi, sin, sqrt, pow, floor, ceil
 from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 import pylab
 from PIL import Image
+#from termcolor import colored
 
 #from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
 #from utils_odes import foo_main, sys_eigenvals, plot_solution
@@ -588,8 +589,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     alpha=0.30
     beta=0.20
     delta=0.50
-    verbose=-2
-    t_patience = 100
+    verbose=1
+    t_patience = 50
     f_delta=0.0
     cut_off=0.4
     section = -1
@@ -829,7 +830,8 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             max_distance=distance
           i=i+1
 
-        if min_distance>=1 and Rk_s<=1: #We have a solution that meets threshold criteria
+        if min_distance>=1 and Rk_s<=1 and d_1/g_1>=.5: #We have a solution that meets threshold criteria
+          #if min_distance>=1 and Rk_s<=1: #We have a solution that meets threshold criteria
           if Rk_s<Rk_s_s_best: #and it is better than prior ones
             Rk_s_s_best=Rk_s
             alpha_s_best=alpha
@@ -840,6 +842,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             u0_s_best=u0
             iteration_s_best=iteration
             R_s_best=R
+            d_1_s_best=d_1
 
 
 
@@ -1018,6 +1021,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
       sol_best=sol_s_best
       u0_best=u0_s_best
       iteration_best=iteration_s_best
+      d_1_best=d_1_s_best
 
 
     best_results["iteration"].append(iteration_best)
@@ -1144,7 +1148,7 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210611070047.caf"
     #fname="/content/drive/MyDrive/VowelAh210612202106.3gp"
     #fname="/content/drive/MyDrive/VowelAh210612205435.3gp"
-    ##fname="/content/drive/MyDrive/TomFlowers8000.wav"
+    #fname="/content/drive/MyDrive/TomFlowers8000.wav"
     #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
     #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
     #fname="/content/drive/MyDrive/VowelAh210613210338.caf"
@@ -1339,7 +1343,7 @@ def CWWmain(fname, mode_of_processing):
 
 
   run=0
-  while run<2:
+  while run<4:
     run=run+1
     res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
     t_max = 500
@@ -1379,8 +1383,8 @@ def CWWmain(fname, mode_of_processing):
         max_distance=distance
       i=i+1
 
-    if min_distance>1 and res['Rk_s']<1:
-      run=4
+    if res['min_distance']>=1 and res['Rk_s']<=1 and res['distanceRatio']>0.5:
+      run=6
 
 
   t_1 = time.process_time() # Here end counting time
@@ -1456,6 +1460,8 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
+
+
 
 
 
