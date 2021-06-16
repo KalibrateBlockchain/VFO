@@ -30,7 +30,6 @@ from math import pi, sin, sqrt, pow, floor, ceil
 from external.pypevoc.speech.glottal import iaif_ola, lpcc2pole
 import pylab
 from PIL import Image
-from termcolor import colored
 
 #from utils_odes import residual_ode, ode_solver, ode_sys, physical_props
 #from utils_odes import foo_main, sys_eigenvals, plot_solution
