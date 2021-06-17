@@ -830,7 +830,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
             max_distance=distance
           i=i+1
 
-        if min_distance>=1 and Rk_s<=1 and d_1/g_1>=.5: #We have a solution that meets threshold criteria
+        if min_distance>=0.98 and Rk_s<=1.02 and d_1/g_1>=.5: #We have a solution that meets threshold criteria
           #if min_distance>=1 and Rk_s<=1: #We have a solution that meets threshold criteria
           if Rk_s<Rk_s_s_best: #and it is better than prior ones
             Rk_s_s_best=Rk_s
@@ -1287,10 +1287,12 @@ def CWWmain(fname, mode_of_processing):
     plt.title('Normalized Third Trimmed Audio')
     ax.plot(rwt_audio)
 
+
+
   gl_audio = gl_audio / np.linalg.norm(gl_audio)
 
   if mode_of_processing==1:
-#    fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced trimmed audio
+    #fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced trimmed audio
     plt.title('Normalized Third Trimmed Glottal Audio')
     ax.plot(gl_audio)
 
@@ -1383,7 +1385,7 @@ def CWWmain(fname, mode_of_processing):
         max_distance=distance
       i=i+1
 
-    if res['min_distance']>=1 and res['Rk_s']<=1 and res['distanceRatio']>0.5:
+    if res['min_distance']>=0.98 and res['Rk_s']<=1.02 and res['distanceRatio']>0.5:
       run=6
 
 
@@ -1416,8 +1418,6 @@ def CWWmain(fname, mode_of_processing):
   print(s)
   """
 
-
-
   #plt.subplots_adjust(hspace = -1.0)
   fig = plt.figure(figsize=(8, 18))
   ax1= fig.add_subplot(9,9,1,frameon=False)
@@ -1435,7 +1435,7 @@ def CWWmain(fname, mode_of_processing):
   ax3.yaxis.label.set_color(color)
   ax3.xaxis.label.set_color(color)
   ax3.axes.xaxis.set_ticks([])
-  ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f}, Fit 2 = {:.2f}, Noise = {:.2f}".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance'],res['noise']*10000), wrap=True, fontsize=10)
+  ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f} (< 1.00), Fit 2 = {:.2f} (>1.0)".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance']), wrap=True, fontsize=10)
   #ax3.set_xlabel(s, wrap=True, fontsize=10)  
   ax4.plot(Sr[:, 0], Sr[:, 1], color)
   ax4.axes.yaxis.set_ticks([])
@@ -1443,12 +1443,12 @@ def CWWmain(fname, mode_of_processing):
   ax4.xaxis.label.set_color(color)
   ax4.yaxis.label.set_color(color)
   ax4.axes.xaxis.set_ticks([])
-  ax4.set_xlabel("{}".format(res['timestamp']), wrap=True, fontsize=10)
+  ax4.set_xlabel("{} \nNoise = {:.2f} (< 1.00)".format(res['timestamp'],res['noise']*10000), wrap=True, fontsize=10)
   ax5.axes.yaxis.set_ticks([])
   ax5.axes.xaxis.set_ticks([])
   ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
   ax5.axvspan(start, end, facecolor='#91CC29')
-  ax5.set_xlabel("Audio Sample Analyzed \nProcessing time = {:.2f}".format(((et_1-et_0)/60)),fontsize=10)
+  ax5.set_xlabel("Audio Sample Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
   ax5.xaxis.label.set_color(color)
   plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
 
@@ -1460,10 +1460,6 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
-
-
-
-
 
 
 
