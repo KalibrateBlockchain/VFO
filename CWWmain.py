@@ -589,7 +589,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     alpha=0.30
     beta=0.20
     delta=0.50
-    verbose=1
+    verbose=-1
     t_patience = 50
     f_delta=0.0
     cut_off=0.4
@@ -1158,7 +1158,7 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210615062339.mp4"
     #fname="/content/drive/MyDrive/VowelA210615220705.caf"
     #fname="/content/drive/MyDrive/VowelA210615221459.caf"
-    #fname="/content/drive/MyDrive/VowelA210615225723.caf"
+    fname="/content/drive/MyDrive/VowelA210615225723.caf"
 
     print(fname)
     from google.colab import drive
@@ -1190,34 +1190,33 @@ def CWWmain(fname, mode_of_processing):
   begin=10000
   length=5000
   f_audio = f_audio / (np.linalg.norm(f_audio)/1)
+  file_audio=f_audio
+  color='w'
 
-  g_order=2 * int(np.round(s_rate / 4000))
-  t_order=2 * int(np.round(s_rate / 2000))+4
-  gl_audio, dg, vt, gf = iaif_ola(f_audio[30000:38000], Fs=s_rate , tract_order=t_order , glottal_order=g_order)
-  
+
   if mode_of_processing==1:
+    color='k'
+    g_order=2 * int(np.round(s_rate / 4000))
+    t_order=2 * int(np.round(s_rate / 2000))+4
+    gl_audio, dg, vt, gf = iaif_ola(f_audio[30000:38000], Fs=s_rate , tract_order=t_order , glottal_order=g_order)
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
     plt.title('Glottal Audio')
     ax.plot(gl_audio[30000:38000])
-  file_audio=f_audio
 
-  if mode_of_processing==1:
     print('file_audio'," sample rate=",s_rate," len(file_audio)=",len(file_audio)," type=",file_audio.dtype," file_rate",file_rate)
     fig, ax = plt.subplots(figsize=(20,3)) 
     plt.title('file_audio')
     ax.plot(file_audio[int(begin*(s_rate/22050)):int((begin+length)*(s_rate/22050))])
     print(np.shape(file_audio),np.shape(f_audio))
 
-
-  if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display raw_audio entire
     plt.title('File Audio')
     ax.plot(file_audio)
 
   rw_audio=file_audio
-  # filter glotal signal
   ns_audio = rw_audio[int(s_rate*.3):int(s_rate*0.5)]
   mean_noise=np.mean(np.abs(ns_audio))
+  abs_audio = np.abs(rw_audio)
 
   if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display noise
@@ -1225,9 +1224,6 @@ def CWWmain(fname, mode_of_processing):
     ax.plot(ns_audio)
     print("mean noise = ",mean_noise)
 
-  abs_audio = np.abs(rw_audio)
-
-  if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display noise reduced
     plt.title('Abs Audio')
     ax.plot(abs_audio)
@@ -1259,6 +1255,68 @@ def CWWmain(fname, mode_of_processing):
   if (end_sample-start_sample)>(s_rate*1.2):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
+
+  if (end-start)<s_rate or mean_noise*10000>2.0:
+    # fail the sample
+    #plt.subplots_adjust(hspace = -1.0)
+    res = {
+      'alpha':float(0),
+      'beta':float(0),
+      'delta':float(0),
+      'Rk':float(0),
+      'Rk_s':float(2),
+      'min_distance':float(0.1),
+      'distanceRatio':float(0),
+      'eigenreal1':float(0),
+      'eigenreal2':float(0),
+      'eigensign':int(0),
+      'timestamp': datetime.datetime.now().isoformat(),
+      'dae_time': 0,
+      'ode_time': 0,
+      }
+
+    fig = plt.figure(figsize=(8, 18))
+    ax1= fig.add_subplot(9,9,1,frameon=False)
+    ax1.axis('off') 
+    ax2= fig.add_subplot(9,9,10,frameon=False)
+    ax2.axis('off')
+    ax3= fig.add_subplot(3,2,3,frameon=True)
+    ax4= fig.add_subplot(3,2,4,frameon=True)
+    ax5= fig.add_subplot(6,1,5,frameon=False)
+    #ax1.plot(Sl[:, 0], Sl[:, 1], color, linewidth=0.5,markersize=0.5)
+    #ax2.plot(Sr[:, 0], Sr[:, 1], color, linewidth=0.5,markersize=0.5)
+    #ax3.plot(Sl[:, 0], Sl[:, 1], color)
+    ax3.plot([0,1,0,1,0],[0,1,1,0,1], color,linewidth=6)
+    ax3.axes.yaxis.set_ticks([])
+    #ax3.set_ylabel('Left Vocal Fold, λ = {:.9f}'.format(res['eigenreal1']), fontsize=10)
+    ax3.yaxis.label.set_color(color)
+    ax3.xaxis.label.set_color(color)
+    ax3.axes.xaxis.set_ticks([])
+    #ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f} (< 1.00), Fit 2 = {:.2f} (>1.0)".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance']), wrap=True, fontsize=10)
+    ax3.set_xlabel("This sample can not be processed", wrap=True, fontsize=10)
+    #ax3.set_xlabel(s, wrap=True, fontsize=10)  
+    #ax4.plot(Sr[:, 0], Sr[:, 1], color)
+    ax4.plot([0,1,0,1,0],[0,1,1,0,1], color, linewidth=6)
+    ax4.axes.yaxis.set_ticks([])
+    #ax4.set_ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
+    ax4.xaxis.label.set_color(color)
+    ax4.yaxis.label.set_color(color)
+    ax4.axes.xaxis.set_ticks([])
+    ax4.set_xlabel("Please submit new sample", wrap=True, fontsize=10)
+    ax5.xaxis.label.set_color(color)
+    ax5.axes.yaxis.set_ticks([])
+    ax5.axes.xaxis.set_ticks([])
+    #ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
+    #ax5.axvspan(start, end, facecolor='#91CC29')
+    ax5.set_xlabel("Please try again; minimize background noise",fontsize=12)
+    #ax5.xaxis.label.set_color(color)
+    plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
+
+    results_file = open(os.path.splitext(fname)[0]+"-results.json", "w")
+    json.dump(res, results_file)
+    results_file.close()
+    sys.exit()
+
   
   rwt_audio = rw_audio[(start-int(s_rate*.1)):(end+int(s_rate*.1))]
 
@@ -1460,6 +1518,7 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
+
 
 
 
