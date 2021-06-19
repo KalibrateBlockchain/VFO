@@ -1256,7 +1256,7 @@ def CWWmain(fname, mode_of_processing):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
 
-  if (end-start)<s_rate or mean_noise*10000>2.0:
+  if (end-start)<s_rate or mean_noise*10000>5.0:
     # fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
