@@ -1158,7 +1158,7 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelAh210615062339.mp4"
     #fname="/content/drive/MyDrive/VowelA210615220705.caf"
     #fname="/content/drive/MyDrive/VowelA210615221459.caf"
-    fname="/content/drive/MyDrive/VowelA210615225723.caf"
+    #fname="/content/drive/MyDrive/VowelA210615225723.caf"
 
     print(fname)
     from google.colab import drive
@@ -1256,7 +1256,7 @@ def CWWmain(fname, mode_of_processing):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
 
-  if (end-start)<s_rate or mean_noise*10000>5.0:
+  if (end-start)<s_rate or mean_noise*10000>8.0:
     # fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
@@ -1303,7 +1303,8 @@ def CWWmain(fname, mode_of_processing):
     ax4.xaxis.label.set_color(color)
     ax4.yaxis.label.set_color(color)
     ax4.axes.xaxis.set_ticks([])
-    ax4.set_xlabel("Please submit new sample", wrap=True, fontsize=10)
+    ax4.set_xlabel("{} \nNoise = {:.2f} (< 1.00)".format(res['timestamp'],res['noise']*10000), wrap=True, fontsize=10)
+    #ax4.set_xlabel("Please submit new sample", wrap=True, fontsize=10)
     ax5.xaxis.label.set_color(color)
     ax5.axes.yaxis.set_ticks([])
     ax5.axes.xaxis.set_ticks([])
@@ -1519,7 +1520,6 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
-
 
 
 
