@@ -1273,6 +1273,7 @@ def CWWmain(fname, mode_of_processing):
       'timestamp': datetime.datetime.now().isoformat(),
       'dae_time': 0,
       'ode_time': 0,
+      'noise':float(mean_noise),
       }
 
     fig = plt.figure(figsize=(8, 18))
