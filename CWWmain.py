@@ -1256,7 +1256,7 @@ def CWWmain(fname, mode_of_processing):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
 
-  if (end-start)<s_rate or mean_noise*10000>10.0:
+  if (end-start)<s_rate or mean_noise*10000>8.0:
     # fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
@@ -1308,10 +1308,11 @@ def CWWmain(fname, mode_of_processing):
     ax5.xaxis.label.set_color(color)
     ax5.axes.yaxis.set_ticks([])
     ax5.axes.xaxis.set_ticks([])
-    #ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
-    #ax5.axvspan(start, end, facecolor='#91CC29')
-    ax5.set_xlabel("Please try again; minimize background noise",fontsize=12)
-    #ax5.xaxis.label.set_color(color)
+    ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
+    ax5.axvspan(start, end, facecolor='#91CC29')
+    ax5.set_xlabel("Please try again; minimize background noise\nSample Clip Duration = {:.2f} seconds (1 second)".format((end-start)/s_rate),fontsize=12)
+    #ax5.set_xlabel("Audio Sample Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
+    ax5.xaxis.label.set_color(color)
     plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
 
     results_file = open(os.path.splitext(fname)[0]+"-results.json", "w")
