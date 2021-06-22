@@ -1258,8 +1258,9 @@ def CWWmain(fname, mode_of_processing):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
 
-  if (end-start)<s_rate or mean_noise*10000>8.0:
-    # fail the sample
+  if (end-start)<s_rate:
+    #if (end-start)<100:
+    #fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
       'alpha':float(0),
@@ -1282,8 +1283,10 @@ def CWWmain(fname, mode_of_processing):
     fig = plt.figure(figsize=(8, 18))
     ax1= fig.add_subplot(9,9,1,frameon=False)
     ax1.axis('off') 
+    ax1.plot([0,1,0,1,0],[0,1,1,0,1], color,linewidth=3)
     ax2= fig.add_subplot(9,9,10,frameon=False)
     ax2.axis('off')
+    ax2.plot([0,1,0,1,0],[0,1,1,0,1], color, linewidth=3)
     ax3= fig.add_subplot(3,2,3,frameon=True)
     ax4= fig.add_subplot(3,2,4,frameon=True)
     ax5= fig.add_subplot(6,1,5,frameon=False)
@@ -1347,8 +1350,10 @@ def CWWmain(fname, mode_of_processing):
     fig = plt.figure(figsize=(8, 18))
     ax1= fig.add_subplot(9,9,1,frameon=False)
     ax1.axis('off') 
+    ax1.plot([0,1,0,1,0],[0,1,1,0,1], color,linewidth=3)
     ax2= fig.add_subplot(9,9,10,frameon=False)
     ax2.axis('off')
+    ax2.plot([0,1,0,1,0],[0,1,1,0,1], color, linewidth=3)
     ax3= fig.add_subplot(3,2,3,frameon=True)
     ax4= fig.add_subplot(3,2,4,frameon=True)
     ax5= fig.add_subplot(6,1,5,frameon=False)
@@ -1371,7 +1376,7 @@ def CWWmain(fname, mode_of_processing):
     ax4.xaxis.label.set_color(color)
     ax4.yaxis.label.set_color(color)
     ax4.axes.xaxis.set_ticks([])
-    ax4.set_xlabel("{} \Ambient noise = {:.2f} (< 1.00)".format(res['timestamp'],res['noise']*10000), wrap=True, fontsize=10)
+    ax4.set_xlabel("{}\nAmbient noise = {:.2f} (< 1.00)".format(res['timestamp'],res['noise']*10000), wrap=True, fontsize=10)
     #ax4.set_xlabel("Please submit new sample", wrap=True, fontsize=10)
     ax5.xaxis.label.set_color(color)
     ax5.axes.yaxis.set_ticks([])
