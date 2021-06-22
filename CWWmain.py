@@ -1159,6 +1159,8 @@ def CWWmain(fname, mode_of_processing):
     #fname="/content/drive/MyDrive/VowelA210615220705.caf"
     #fname="/content/drive/MyDrive/VowelA210615221459.caf"
     #fname="/content/drive/MyDrive/VowelA210615225723.caf"
+    #fname="/content/drive/MyDrive/VowelA210621085909.mp4"
+    #fname="/content/drive/MyDrive/VowelA210621113819.mp4"
 
     print(fname)
     from google.colab import drive
@@ -1256,8 +1258,7 @@ def CWWmain(fname, mode_of_processing):
     start=int(((start_sample+end_sample)/2)-(s_rate*.5))
     end=int(start+(s_rate*1.0))
 
-    #if (end-start)<s_rate or mean_noise*10000>8.0:
-  if (end-start)<s_rate:
+  if (end-start)<s_rate or mean_noise*10000>8.0:
     # fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
@@ -1275,6 +1276,7 @@ def CWWmain(fname, mode_of_processing):
       'dae_time': 0,
       'ode_time': 0,
       'noise':float(mean_noise),
+      'process_result':'failed, too short',
       }
 
     fig = plt.figure(figsize=(8, 18))
@@ -1311,7 +1313,7 @@ def CWWmain(fname, mode_of_processing):
     ax5.axes.xaxis.set_ticks([])
     ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
     ax5.axvspan(start, end, facecolor='#91CC29')
-    ax5.set_xlabel("Please try again; minimize background noise\nSample Clip Duration = {:.2f} seconds (1 second)".format((end-start)/s_rate),fontsize=12)
+    ax5.set_xlabel("Please try again; increase vocal clip duration\nVocal Clip Duration = {:.2f} seconds (1 second)".format((end-start)/s_rate),fontsize=12)
     #ax5.set_xlabel("Audio Sample Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
     ax5.xaxis.label.set_color(color)
     plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
@@ -1321,6 +1323,70 @@ def CWWmain(fname, mode_of_processing):
     results_file.close()
     sys.exit()
 
+  if mean_noise*10000>2.0:
+    # fail the sample
+    #plt.subplots_adjust(hspace = -1.0)
+    res = {
+      'alpha':float(0),
+      'beta':float(0),
+      'delta':float(0),
+      'Rk':float(0),
+      'Rk_s':float(2),
+      'min_distance':float(0.1),
+      'distanceRatio':float(0),
+      'eigenreal1':float(0),
+      'eigenreal2':float(0),
+      'eigensign':int(0),
+      'timestamp': datetime.datetime.now().isoformat(),
+      'dae_time': 0,
+      'ode_time': 0,
+      'noise':float(mean_noise),
+      'process_result':'failed, too noisy',
+      }
+
+    fig = plt.figure(figsize=(8, 18))
+    ax1= fig.add_subplot(9,9,1,frameon=False)
+    ax1.axis('off') 
+    ax2= fig.add_subplot(9,9,10,frameon=False)
+    ax2.axis('off')
+    ax3= fig.add_subplot(3,2,3,frameon=True)
+    ax4= fig.add_subplot(3,2,4,frameon=True)
+    ax5= fig.add_subplot(6,1,5,frameon=False)
+    #ax1.plot(Sl[:, 0], Sl[:, 1], color, linewidth=0.5,markersize=0.5)
+    #ax2.plot(Sr[:, 0], Sr[:, 1], color, linewidth=0.5,markersize=0.5)
+    #ax3.plot(Sl[:, 0], Sl[:, 1], color)
+    ax3.plot([0,1,0,1,0],[0,1,1,0,1], color,linewidth=6)
+    ax3.axes.yaxis.set_ticks([])
+    #ax3.set_ylabel('Left Vocal Fold, λ = {:.9f}'.format(res['eigenreal1']), fontsize=10)
+    ax3.yaxis.label.set_color(color)
+    ax3.xaxis.label.set_color(color)
+    ax3.axes.xaxis.set_ticks([])
+    #ax3.set_xlabel("α = {:.3f} , β = {:.3f} , δ = {:.3f} \nFit 1 = {:.2f} (< 1.00), Fit 2 = {:.2f} (>1.0)".format(res['alpha'], res['beta'], res['delta'],res['Rk_s'],res['min_distance']), wrap=True, fontsize=10)
+    ax3.set_xlabel("This sample can not be processed", wrap=True, fontsize=10)
+    #ax3.set_xlabel(s, wrap=True, fontsize=10)  
+    #ax4.plot(Sr[:, 0], Sr[:, 1], color)
+    ax4.plot([0,1,0,1,0],[0,1,1,0,1], color, linewidth=6)
+    ax4.axes.yaxis.set_ticks([])
+    #ax4.set_ylabel('Right  Vocal Fold, λ = {:.9f}'.format(res['eigenreal2']), fontsize=10)
+    ax4.xaxis.label.set_color(color)
+    ax4.yaxis.label.set_color(color)
+    ax4.axes.xaxis.set_ticks([])
+    ax4.set_xlabel("{} \Ambient noise = {:.2f} (< 1.00)".format(res['timestamp'],res['noise']*10000), wrap=True, fontsize=10)
+    #ax4.set_xlabel("Please submit new sample", wrap=True, fontsize=10)
+    ax5.xaxis.label.set_color(color)
+    ax5.axes.yaxis.set_ticks([])
+    ax5.axes.xaxis.set_ticks([])
+    ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
+    ax5.axvspan(start, end, facecolor='#91CC29')
+    ax5.set_xlabel("Please try again; reduce ambient noise\nVocal Clip Duration = {:.2f} seconds (1 second)".format((end-start)/s_rate),fontsize=12)
+    #ax5.set_xlabel("Audio Sample Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
+    ax5.xaxis.label.set_color(color)
+    plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
+
+    results_file = open(os.path.splitext(fname)[0]+"-results.json", "w")
+    json.dump(res, results_file)
+    results_file.close()
+    sys.exit()
   
   rwt_audio = rw_audio[(start-int(s_rate*.1)):(end+int(s_rate*.1))]
 
@@ -1456,6 +1522,7 @@ def CWWmain(fname, mode_of_processing):
   res.update({'processingTime':float((et_1-et_0)/60)})
   res.update({'cpuTime':float(t_1-t_0)})
   res.update({'noise':float(mean_noise)})
+  res.update({'process_result':'success'})
 
 
   if mode_of_processing==1 or (mode_of_processing==2):
@@ -1510,7 +1577,7 @@ def CWWmain(fname, mode_of_processing):
   ax5.axes.xaxis.set_ticks([])
   ax5.plot(rw_audio, color, linewidth=0.1,markersize=0.1)
   ax5.axvspan(start, end, facecolor='#91CC29')
-  ax5.set_xlabel("Audio Sample Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
+  ax5.set_xlabel("Vocal Clip Duration = {:.2f} seconds (1 second) \nProcessing time = {:.2f} minutes".format((len(gl_audio)/s_rate),((et_1-et_0)/60)),fontsize=10)
   ax5.xaxis.label.set_color(color)
   plt.savefig(os.path.splitext(fname)[0]+"-plot.png", bbox_inches='tight',pad_inches = 0.05, transparent=True, edgecolor='none')
 
@@ -1522,6 +1589,5 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
-
 
 
