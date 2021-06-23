@@ -35,7 +35,11 @@ import logging
 
 def vfo_fitter(gl_audio, rwt_audio, s_rate, period, numberOfPeriods):  
   
+<<<<<<< HEAD
   verbose=1 # for console
+=======
+  verbose=0 # for console
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
   
   n=int(len(period))-numberOfPeriods-1
   startPeriod = random.randint(1, n)
@@ -152,10 +156,22 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
     tau = 1e-3  # time delay for surface wave to travel half glottal height, ms
     c = 5000  # air particle velocity, cm/s
     eta = 1.0  # nonlinear factor for energy dissipation at large amplitude
+<<<<<<< HEAD
     
     #compute d_1; distance of glottal_flow signal
     i_1=1
     g_1=0
+=======
+     
+    #compute d_1; distance of glottal_flow signal
+    i_1=1
+    g_1=0
+    
+    #set timers for analysis of processing resources
+    dae_t=0
+    ode_t=0
+    
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
     while i_1<(len(glottal_flow)-1):
         i_1=i_1+1
         g_1=g_1+np.abs(glottal_flow[i_1-1]-glottal_flow[i_1])
@@ -214,6 +230,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
 
         x_scaling = np.sqrt(eta)
         vdp_params = [alpha, beta, delta]
+<<<<<<< HEAD
+=======
+        ode_t=ode_t-time.process_time() #cacluate ode time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
         sol = ode_solver(
             vdp_coupled,
             vdp_jacobian,
@@ -225,6 +245,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             dt=(time_scaling / float(sample_rate)),  # dt -> ds
             tmax=(time_scaling * T),
         )
+<<<<<<< HEAD
+=======
+        ode_t=ode_t+time.process_time() #cacluate ode time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
 
         if len(sol) > len(wav_samples):
             sol = sol[:-1]
@@ -254,6 +278,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         M_T = [0.0, 0.0, 0.0, 0.0]  # initial states of adjoint model at T
         dM_T = [0.0, -R[-1], 0.0, -R[-1]]  # initial ddL = ddE = -R(T)
         try:
+<<<<<<< HEAD
+=======
+            dae_t=dae_t-time.process_time() #cacluate dae time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
             adjoint_sol = dae_solver(
                 residual,
                 M_T,
@@ -274,6 +302,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
                 report_continuously=False,  # NOTE: report_continuously should be False
                 verbosity=50,
             )
+<<<<<<< HEAD
+=======
+            dae_t=dae_t+time.process_time() #cacluate dae time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
         except Exception as e:
             if verbose==1:
                 print("exception: ",e)
@@ -342,6 +374,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             vdp_params_1 = alpha_k, beta_k, delta_k
 
             # Solve vocal fold displacement model
+<<<<<<< HEAD
+=======
+            ode_t=ode_t-time.process_time() #cacluate ode time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
             sol_1 = ode_solver(
                 vdp_coupled,
                 vdp_jacobian,
@@ -353,6 +389,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
                 dt=1,
                 tmax=t_max_1,
             )
+<<<<<<< HEAD
+=======
+            ode_t=ode_t+time.process_time() #cacluate ode time
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
 
             # Get steady state
             Sr_1 = sol_1[int(t_max_1 / 2) :, [1, 2]]  # right states, (xr, dxr)
@@ -396,7 +436,10 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
             
 
         
+<<<<<<< HEAD
 
+=======
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
         if (Rk < Rk_best) and ((d_1/g_1)>(cut_off)) and ((d_1/g_1)<(1/cut_off)):  # has improvement
             #if (Rk < Rk_best):  # has improvement
             # Record best
@@ -502,6 +545,11 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate,alpha=0.3,beta
         'eigenreal2':float(r2),
         'eigensign':int(np.sign(r1*r2)),
         'timestamp': datetime.datetime.now().isoformat(),
+<<<<<<< HEAD
+=======
+        'dae_time': dae_t,
+        'ode_time': ode_t,
+>>>>>>> 015aaac3d09192f1835a0386a42cbbca9f2f7c7a
     }
 
        # NOTE: If you want to plot glottal flow, estimatted glottal flow and residual
