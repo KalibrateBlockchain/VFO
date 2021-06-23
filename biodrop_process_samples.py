@@ -9,13 +9,14 @@ from utils import *
 import json
 import argparse
 import subprocess
+from os import path
 
 # Get Directory List 
 
 for x in os.listdir('/var/www/html/process_samples/'):
 	# Take first file
 	filename='/var/www/html/process_samples/'+x
-	if os.exists(filename):
+	if path.exists(filename):
 		file=open(filename,'rt')
 		contents = file.read()
 		my_dict = json.loads(contents)
@@ -26,7 +27,7 @@ for x in os.listdir('/var/www/html/process_samples/'):
 		audio_file = my_dict['audio_file']
 		user_id = my_dict['user_id']
 		mode = my_dict['mode']
-		cmdcall = 'healthdrop_audio_processor.py --data_dir '+data_dir
+		cmdcall = '/home/cisco/miniconda3/bin/python healthdrop_audio_processor.py --data_dir '+data_dir
 		cmdcall = cmdcall +' --user_id '+user_id
 		cmdcall = cmdcall +' --test_id '+test_id
 		cmdcall = cmdcall +' --audio_file '+audio_file
