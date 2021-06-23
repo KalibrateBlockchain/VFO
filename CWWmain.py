@@ -1108,7 +1108,8 @@ def CWWmain(fname, mode_of_processing):
   #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-aaaaa.wav"
   #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TomFlowers-2.wav"
   #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
-  #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
+  fname="/content/drive/MyDrive/VowelAh210613083938.caf"
+  #fname="/content/drive/MyDrive/VowelA210621131157.mp4"
   t_0 = time.process_time() # Here start counting time
   et_0=time.time()
   
@@ -1182,6 +1183,7 @@ def CWWmain(fname, mode_of_processing):
   #f_audio=f[:, 0]
   
   file_rate=s_rate
+  version=2.0
 
   if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
@@ -1278,6 +1280,7 @@ def CWWmain(fname, mode_of_processing):
       'ode_time': 0,
       'noise':float(mean_noise),
       'process_result':'failed, too short',
+      'version':float(version),
       }
 
     fig = plt.figure(figsize=(8, 18))
@@ -1345,6 +1348,7 @@ def CWWmain(fname, mode_of_processing):
       'ode_time': 0,
       'noise':float(mean_noise),
       'process_result':'failed, too noisy',
+      'version':float(version),
       }
 
     fig = plt.figure(figsize=(8, 18))
@@ -1446,7 +1450,6 @@ def CWWmain(fname, mode_of_processing):
   gl_audio_OBJ=ray.put(gl_audio)
   rwt_audio_OBJ=ray.put(rwt_audio)
   s_rate_OBJ=ray.put(s_rate)
-
   
   res_OBJ=vfo_vocal_fold_estimator.remote(gl_audio_OBJ,rwt_audio_OBJ,s_rate_OBJ)
   res2_OBJ=vfo_vocal_fold_estimator.remote(gl_audio_OBJ,rwt_audio_OBJ,s_rate_OBJ)
@@ -1460,7 +1463,6 @@ def CWWmain(fname, mode_of_processing):
   res10_OBJ=vfo_vocal_fold_estimator.remote(gl_audio_OBJ,rwt_audio_OBJ,s_rate_OBJ)
   res11_OBJ=vfo_vocal_fold_estimator.remote(gl_audio_OBJ,rwt_audio_OBJ,s_rate_OBJ)
   res12_OBJ=vfo_vocal_fold_estimator.remote(gl_audio_OBJ,rwt_audio_OBJ,s_rate_OBJ)
-
   res=ray.get(res_OBJ)
   res2=ray.get(res2_OBJ)
   res3=ray.get(res3_OBJ)
@@ -1528,6 +1530,7 @@ def CWWmain(fname, mode_of_processing):
   res.update({'cpuTime':float(t_1-t_0)})
   res.update({'noise':float(mean_noise)})
   res.update({'process_result':'success'})
+  res.update({'version':float(version)})
 
 
   if mode_of_processing==1 or (mode_of_processing==2):
@@ -1594,5 +1597,3 @@ def CWWmain(fname, mode_of_processing):
   
 if __name__ == '__main__':
     CWWmain("",2)
-
-
