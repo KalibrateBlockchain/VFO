@@ -1108,7 +1108,7 @@ def CWWmain(fname, mode_of_processing):
   #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/CBW-aaaaa.wav"
   #fname = "/VFO/Sample_files/F70A4800-2487-D70C-E93B-8F9199D75BB7/TomFlowers-2.wav"
   #fname="/content/drive/MyDrive/VowelA210608235543_8000.wav"
-  fname="/content/drive/MyDrive/VowelAh210613083938.caf"
+  #fname="/content/drive/MyDrive/VowelAh210613083938.caf"
   #fname="/content/drive/MyDrive/VowelA210621131157.mp4"
   t_0 = time.process_time() # Here start counting time
   et_0=time.time()
@@ -1183,7 +1183,7 @@ def CWWmain(fname, mode_of_processing):
   #f_audio=f[:, 0]
   
   file_rate=s_rate
-  version=2.0
+  version=3.0
 
   if mode_of_processing==1:
     fig, ax = plt.subplots(figsize=(20,3)) #display gl_audio entire
@@ -1329,7 +1329,7 @@ def CWWmain(fname, mode_of_processing):
     results_file.close()
     sys.exit()
 
-  if mean_noise*10000>2.0:
+  if mean_noise*10000>8.0:
     # fail the sample
     #plt.subplots_adjust(hspace = -1.0)
     res = {
