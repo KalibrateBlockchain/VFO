@@ -779,7 +779,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
         #R_s=librosa.resample(R, sample_rate, 8000) 
         Rk_s = np.sqrt(np.sum(R[int(len(R)/3):] ** 2))
         if sample_rate>40000:
-          Rk_s=Rk_s-.15
+          Rk_s=Rk_s-.10
         #Rk = np.sqrt((np.sum(R[int(len(R)*.2):] ** 2))/len(R)*22050)
         
         #compute d_1; distance of u0 signal
@@ -1520,7 +1520,7 @@ def CWWmain(fname, mode_of_processing):
         max_distance=distance
       i=i+1
 
-    if res['min_distance']>=0.98 and res['Rk_s']<=1.02 and res['distanceRatio']>0.5:
+    if res['min_distance']>=1.0 and res['Rk_s']<=1.0 and res['distanceRatio']>0.5:
       run=6
 
 
