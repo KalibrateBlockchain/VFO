@@ -591,7 +591,7 @@ def vfo_vocal_fold_estimator(glottal_flow,wav_samples,sample_rate):
     beta=0.20
     delta=0.50
     verbose=-1
-    t_patience = 50
+    t_patience = 40
     f_delta=0.0
     cut_off=0.4
     section = -1
@@ -1483,7 +1483,7 @@ def CWWmain(fname, mode_of_processing):
 
 
   run=0
-  while run<4:
+  while run<1:
     run=run+1
     res=vfo_vocal_fold_estimator(gl_audio,rwt_audio,s_rate)
     t_max = 500
